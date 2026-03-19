@@ -26,7 +26,7 @@
         </el-tooltip>
       </template>
 
-      <el-dropdown @command="handleCommand" class="avatar-container" trigger="click">
+      <el-dropdown @command="handleCommand" class="avatar-container" trigger="click" popper-class="user-dropdown-popper" placement="bottom-end">
         <div class="avatar-wrapper">
           <img :src="userStore.avatar" class="user-avatar" />
           <span class="user-nickname">{{ userStore.nickName }}</span>
@@ -35,7 +35,7 @@
           </svg>
         </div>
         <template #dropdown>
-          <el-dropdown-menu class="user-dropdown-menu">
+          <el-dropdown-menu>
             <router-link to="/user/profile">
               <el-dropdown-item>
                 <svg viewBox="0 0 24 24" fill="none">
@@ -329,5 +329,53 @@ function logout() {
   border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
   margin-top: 8px !important;
   padding-top: 14px !important;
+}
+</style>
+
+<style lang="scss">
+.user-dropdown-popper {
+  z-index: 99999 !important;
+  
+  .el-dropdown-menu {
+    background: rgba(15, 12, 41, 0.98) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    
+    .el-dropdown-menu__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      transition: all 0.2s ease;
+      margin: 2px 0;
+      
+      svg {
+        width: 18px;
+        height: 18px;
+        opacity: 0.7;
+      }
+      
+      &:hover {
+        background: rgba(6, 182, 212, 0.12);
+        color: #22d3ee;
+        
+        svg {
+          opacity: 1;
+        }
+      }
+    }
+    
+    .el-dropdown-menu__item--divided {
+      border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+      margin-top: 8px !important;
+      padding-top: 14px !important;
+    }
+  }
 }
 </style>
