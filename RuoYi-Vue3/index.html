@@ -33,150 +33,106 @@
       z-index: 999999;
       background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
+      will-change: opacity, transform;
+    }
+
+    #loader-wrapper.fade-out {
+      animation: loader-fade-out 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes loader-fade-out {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.1);
+      }
     }
 
     #loader {
       display: block;
       position: relative;
-      left: 50%;
-      top: 50%;
-      width: 150px;
-      height: 150px;
-      margin: -75px 0 0 -75px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       border: 3px solid transparent;
       border-top-color: #06b6d4;
-      -webkit-animation: spin 2s linear infinite;
-      -ms-animation: spin 2s linear infinite;
-      -moz-animation: spin 2s linear infinite;
-      -o-animation: spin 2s linear infinite;
-      animation: spin 2s linear infinite;
+      animation: spin 1.5s linear infinite;
       z-index: 1001;
+      will-change: transform;
     }
 
     #loader:before {
       content: "";
       position: absolute;
-      top: 5px;
-      left: 5px;
-      right: 5px;
-      bottom: 5px;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
       border-radius: 50%;
       border: 3px solid transparent;
       border-top-color: #a78bfa;
-      -webkit-animation: spin 3s linear infinite;
-      -moz-animation: spin 3s linear infinite;
-      -o-animation: spin 3s linear infinite;
-      -ms-animation: spin 3s linear infinite;
-      animation: spin 3s linear infinite;
+      animation: spin 2s linear infinite reverse;
+      z-index: 1001;
+      will-change: transform;
     }
 
     #loader:after {
       content: "";
       position: absolute;
-      top: 15px;
-      left: 15px;
-      right: 15px;
-      bottom: 15px;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
       border-radius: 50%;
       border: 3px solid transparent;
       border-top-color: #22d3ee;
-      -moz-animation: spin 1.5s linear infinite;
-      -o-animation: spin 1.5s linear infinite;
-      -ms-animation: spin 1.5s linear infinite;
-      -webkit-animation: spin 1.5s linear infinite;
-      animation: spin 1.5s linear infinite;
-    }
-
-    @-webkit-keyframes spin {
-      0% {
-        -webkit-transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        transform: rotate(0deg);
-      }
-      100% {
-        -webkit-transform: rotate(360deg);
-        -ms-transform: rotate(360deg);
-        transform: rotate(360deg);
-      }
+      animation: spin 1s linear infinite;
+      z-index: 1001;
+      will-change: transform;
     }
 
     @keyframes spin {
-      0% {
-        -webkit-transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        transform: rotate(0deg);
-      }
-      100% {
-        -webkit-transform: rotate(360deg);
-        -ms-transform: rotate(360deg);
-        transform: rotate(360deg);
-      }
-    }
-
-    #loader-wrapper .loader-section {
-      position: fixed;
-      top: 0;
-      width: 51%;
-      height: 100%;
-      background: transparent;
-      z-index: 1000;
-      -webkit-transform: translateX(0);
-      -ms-transform: translateX(0);
-      transform: translateX(0);
-    }
-
-    #loader-wrapper .loader-section.section-left {
-      left: 0;
-    }
-
-    #loader-wrapper .loader-section.section-right {
-      right: 0;
-    }
-
-    .loaded #loader-wrapper .loader-section.section-left {
-      -webkit-transform: translateX(-100%);
-      -ms-transform: translateX(-100%);
-      transform: translateX(-100%);
-      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-    }
-
-    .loaded #loader-wrapper .loader-section.section-right {
-      -webkit-transform: translateX(100%);
-      -ms-transform: translateX(100%);
-      transform: translateX(100%);
-      -webkit-transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-      transition: all 0.7s 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
-    }
-
-    .loaded #loader {
-      opacity: 0;
-      -webkit-transition: all 0.3s ease-out;
-      transition: all 0.3s ease-out;
-    }
-
-    .loaded #loader-wrapper {
-      visibility: hidden;
-      -webkit-transform: translateY(-100%);
-      -ms-transform: translateY(-100%);
-      transform: translateY(-100%);
-      -webkit-transition: all 0.3s 1s ease-out;
-      transition: all 0.3s 1s ease-out;
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     #loader-wrapper .loading-tip {
-      position: absolute;
-      top: 60%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: rgba(255, 255, 255, 0.9);
+      margin-top: 40px;
+      color: rgba(255, 255, 255, 0.8);
       font-size: 14px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       letter-spacing: 2px;
+      text-align: center;
+      z-index: 1002;
+      position: relative;
+      animation: tip-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes tip-pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .loaded #loader-wrapper {
+      animation: loader-exit 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes loader-exit {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-30px) scale(1.05);
+      }
     }
   </style>
 </head>
@@ -184,13 +140,31 @@
   <div id="app"></div>
   <div id="loader-wrapper">
     <div id="loader"></div>
-    <div class="loading-tip">正在加载系统资源，请耐心等待</div>
+    <div class="loading-tip">正在加载系统资源，请稍候</div>
   </div>
   <script>
     window.addEventListener('DOMContentLoaded', function() {
+      // 等待 Vue 应用挂载完成
+      var checkApp = setInterval(function() {
+        var app = document.getElementById('app');
+        if (app && app.children.length > 0) {
+          clearInterval(checkApp);
+          setTimeout(function() {
+            document.body.classList.add('loaded');
+            setTimeout(function() {
+              var loader = document.getElementById('loader-wrapper');
+              if (loader) {
+                loader.style.display = 'none';
+              }
+            }, 800);
+          }, 300);
+        }
+      }, 50);
+      
+      // 最大等待时间
       setTimeout(function() {
         document.body.classList.add('loaded');
-      }, 100);
+      }, 3000);
     });
   </script>
   <script type="module" src="/src/main.js"></script>
