@@ -125,13 +125,16 @@ function logout() {
   align-items: center;
   height: 60px;
   padding: 0 16px;
-  background: rgba(15, 12, 41, 0.8);
+  background: rgba(15, 12, 41, 0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 
   &::after {
     content: '';
@@ -285,7 +288,8 @@ function logout() {
   border-radius: 12px;
   padding: 8px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  margin-top: 8px !important;
+  margin-top: 12px !important;
+  z-index: 9999 !important;
 
   .el-dropdown-menu__item {
     display: flex;
