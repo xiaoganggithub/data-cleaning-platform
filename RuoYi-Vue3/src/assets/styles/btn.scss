@@ -1,0 +1,53 @@
+$blue: #324157;
+$light-blue: #333c46;
+$red: #C03639;
+$pink: #E65D6E;
+$green: #30B08F;
+$tiffany: #4AB7BD;
+$yellow: #FEC171;
+$panGreen: #30B08F;
+
+@mixin colorBtn($color) {
+  background: $color;
+
+  &:hover {
+    color: $color;
+
+    &:before,
+    &:after {
+      background: $color;
+    }
+  }
+}
+
+.blue-btn {
+  @include colorBtn($blue)
+}
+
+.light-blue-btn {
+  @include colorBtn($light-blue)
+}
+
+.red-btn {
+  @include colorBtn($red)
+}
+
+.pink-btn {
+  @include colorBtn($pink)
+}
+
+.green-btn {
+  @include colorBtn($green)
+}
+
+.tiffany-btn {
+  @include colorBtn($tiffany)
+}
+
+.yellow-btn {
+  @include colorBtn($yellow)
+}
+
+.pan-green-btn {
+  @include colorBtn($panGreen)
+}

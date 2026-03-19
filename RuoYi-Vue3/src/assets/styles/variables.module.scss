@@ -1,0 +1,58 @@
+// Design tokens: Base color palette for ZG theme
+// Primary colors - Cyan/Teal family (matching login page)
+$brand: #06b6d4;
+$brand-dark: #0891b2;
+$brand-light: #22d3ee;
+$brand-lightest: #e6f9fc;
+
+// Secondary colors
+$secondary: #7c3aed;
+$secondary-dark: #6d28d9;
+$secondary-light: #a78bfa;
+
+// Accent colors
+$accent: #a78bfa;
+$success: #10b981;
+$warning: #f59e0b;
+$danger: #ef4444;
+$info: #3b82f6;
+
+// base color
+$blue: #324157;
+$light-blue: #333c46;
+$red: #C03639;
+$pink: #E65D6E;
+$green: #30B08F;
+$tiffany: #4AB7BD;
+$yellow: #FEC171;
+$panGreen: #30B08F;
+
+// Default theme variables
+$menuText: rgba(255, 255, 255, 0.6);
+$menuActiveText: #22d3ee;
+$menuBg: #0f0c29;
+$menuHover: rgba(255, 255, 255, 0.06);
+
+// Light theme - theme-light
+$menuLightBg: #ffffff;
+$menuLightHover: #f0f1f5;
+$menuLightText: #303133;
+$menuLightActiveText: #06b6d4;
+
+// Base variables
+$base-sidebar-width: 200px;
+$sideBarWidth: 200px;
+
+// Menu dark theme variables
+$base-menu-color: rgba(255, 255, 255, 0.6);
+$base-menu-color-active: #22d3ee;
+$base-menu-background: #0f0c29;
+$base-sub-menu-background: #1a1a2e;
+$base-sub-menu-hover: rgba(255, 255, 255, 0.06);
+
+// Component variables
+$--color-primary: #06b6d4;
+$--color-success: #10b981;
+$--color-warning: #f59e0b;
+$--color-danger: #ef4444;
+$--color-info: #3b82f6;

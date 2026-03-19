@@ -1,0 +1,63 @@
+// Design tokens: color palette
+// Primary colors - Cyan/Teal family (matching login page)
+$brand: #06b6d4;
+$brand-dark: #0891b2;
+$brand-light: #22d3ee;
+$brand-lightest: #e6f9fc;
+
+// Accent colors
+$accent: #a78bfa;
+$success: #10b981;
+$warning: #f59e0b;
+$danger: #ef4444;
+$info: #3b82f6;
+
+// Neutral colors - Dark theme optimized
+$white: #ffffff;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+// Dark mode colors for glass morphism
+$dark-50: rgba(255, 255, 255, 0.05);
+$dark-100: rgba(255, 255, 255, 0.08);
+$dark-200: rgba(255, 255, 255, 0.12);
+$dark-300: rgba(255, 255, 255, 0.2);
+
+// Background colors
+$bg-primary: #ffffff;
+$bg-secondary: #f9fafb;
+$bg-tertiary: #f3f4f6;
+
+// Dark backgrounds
+$bg-dark-primary: #0f0c29;
+$bg-dark-secondary: #302b63;
+$bg-dark-tertiary: #24243e;
+
+// Text colors
+$text-primary: #111827;
+$text-secondary: #4b5563;
+$text-tertiary: #6b7280;
+$text-muted: #9ca3af;
+
+// Dark text colors
+$text-dark-primary: #ffffff;
+$text-dark-secondary: rgba(255, 255, 255, 0.7);
+$text-dark-muted: rgba(255, 255, 255, 0.5);
+
+// Border colors
+$border-light: rgba(255, 255, 255, 0.1);
+$border-medium: rgba(255, 255, 255, 0.2);
+$card-border: rgba(6, 182, 212, 0.25);
+
+// Glass effect
+$glass-bg: rgba(255, 255, 255, 0.03);
+$glass-border: rgba(255, 255, 255, 0.1);
+$glass-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);

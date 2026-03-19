@@ -1,0 +1,149 @@
+// Central design tokens
+@import './_colors.scss';
+@import './_typography.scss';
+@import './_spacing.scss';
+@import './_borders.scss';
+@import './_animations.scss';
+
+/* Global CSS Variables for token consumption */
+:root {
+  /* Colors - Cyan/Teal brand matching login */
+  --color-brand: #{$brand};
+  --color-brand-dark: #{$brand-dark};
+  --color-brand-light: #{$brand-light};
+  --color-brand-lightest: #{$brand-lightest};
+  --color-secondary: #{$secondary};
+  --color-accent: #{$accent};
+  --color-success: #{$success};
+  --color-warning: #{$warning};
+  --color-danger: #{$danger};
+  --color-info: #{$info};
+
+  /* Backgrounds */
+  --bg-primary: #{$bg-primary};
+  --bg-secondary: #{$bg-secondary};
+  --bg-tertiary: #{$bg-tertiary};
+
+  /* Text */
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --text-tertiary: #{$text-tertiary};
+  --text-muted: #{$text-muted};
+
+  /* Borders */
+  --border-radius-sm: #{$border-radius-sm};
+  --border-radius-md: #{$border-radius-md};
+  --border-radius-lg: #{$border-radius-lg};
+  --border-radius-xl: #{$border-radius-xl};
+  --border-width-sm: #{$border-width-sm};
+  --border-color-light: #{$border-color-light};
+  --border-color-medium: #{$border-medium};
+
+  /* Shadows */
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-soft: #{$shadow-soft};
+  --shadow-glow: 0 10px 30px -5px rgba(6, 182, 212, 0.4);
+  --shadow-glow-lg: 0 15px 35px -5px rgba(6, 182, 212, 0.5);
+
+  /* Transitions */
+  --transition-fast: #{$transition-fast};
+  --transition-base: #{$transition-base};
+  --transition-slow: #{$transition-slow};
+  --transition-bounce: #{$transition-bounce};
+}
+
+/* Dark Theme Variables */
+html.dark {
+  /* Glass morphism backgrounds */
+  --sidebar-bg: #{$bg-dark-primary};
+  --sidebar-bg-secondary: #{$bg-dark-secondary};
+  --sidebar-bg-tertiary: #{$bg-dark-tertiary};
+
+  /* Text */
+  --sidebar-text: #{$text-dark-secondary};
+  --sidebar-text-muted: #{$text-dark-muted};
+  --sidebar-text-active: #{$brand-light};
+
+  /* Hover states */
+  --sidebar-hover-bg: #{$dark-100};
+  --sidebar-hover-text: #{$white};
+
+  /* Active states */
+  --sidebar-active-bg: rgba(6, 182, 212, 0.15);
+  --sidebar-active-text: #{$brand-light};
+  --sidebar-active-border: #{$brand};
+
+  /* Navbar */
+  --navbar-bg: #{$bg-dark-primary};
+  --navbar-bg-secondary: #{$bg-dark-secondary};
+  --navbar-text: #{$text-dark-secondary};
+  --navbar-hover: #{$dark-100};
+
+  /* Tags View */
+  --tags-bg: #{$bg-dark-primary};
+  --tags-item-bg: #{$dark-100};
+  --tags-item-border: #{$dark-200};
+  --tags-item-text: #{$text-dark-secondary};
+  --tags-item-hover-bg: #{$dark-200};
+  --tags-item-hover-text: #{$white};
+  --tags-item-active-bg: rgba(6, 182, 212, 0.15);
+  --tags-item-active-text: #{$brand-light};
+  --tags-item-active-border: #{$brand};
+
+  /* Cards & Content */
+  --card-bg: #{$glass-bg};
+  --card-border: #{$glass-border};
+  --card-shadow: #{$glass-shadow};
+
+  /* Inputs */
+  --input-bg: #{$dark-50};
+  --input-border: #{$dark-200};
+  --input-text: #{$white};
+  --input-placeholder: #{$text-dark-muted};
+  --input-hover-border: #{$brand};
+  --input-focus-border: #{$brand};
+  --input-focus-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+
+  /* Buttons */
+  --btn-primary-bg: linear-gradient(135deg, #{$brand} 0%, #{$brand-dark} 100%);
+  --btn-primary-hover-bg: linear-gradient(135deg, #{$brand-light} 0%, #{$brand} 100%);
+  --btn-primary-shadow: #{$shadow-glow};
+  --btn-primary-hover-shadow: #{$shadow-glow-lg};
+
+  /* Tables */
+  --table-header-bg: #{$dark-100};
+  --table-row-bg: transparent;
+  --table-row-hover-bg: #{$dark-100};
+  --table-border: #{$dark-200};
+  --table-text: #{$text-dark-secondary};
+
+  /* Dividers */
+  --divider-bg: #{$dark-200};
+}
+
+/* Light Theme Variables */
+html.light {
+  --sidebar-bg: #{$gray-900};
+  --sidebar-text: #{$text-dark-secondary};
+  --sidebar-text-muted: #{$text-dark-muted};
+  --sidebar-text-active: #{$brand-light};
+  --sidebar-hover-bg: #{$gray-800};
+  --sidebar-active-bg: rgba(6, 182, 212, 0.15);
+  --sidebar-active-text: #{$brand};
+  --sidebar-active-border: #{$brand};
+
+  --navbar-bg: #{$white};
+  --navbar-text: #{$text-primary};
+  --navbar-hover: #{$gray-100};
+
+  --card-bg: #{$white};
+  --card-border: #{$gray-200};
+  --card-shadow: #{$shadow-soft};
+
+  --input-bg: #{$white};
+  --input-border: #{$gray-300};
+  --input-text: #{$text-primary};
+  --input-placeholder: #{$text-muted};
+}

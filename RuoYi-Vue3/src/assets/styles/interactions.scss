@@ -1,0 +1,450 @@
+/* ========================================
+   全局交互动画 - Microinteractions
+   青色主题 (#06b6d4)
+   ======================================== */
+
+/* CSS 变量 */
+:root {
+  --interaction-primary: #06b6d4;
+  --interaction-primary-light: #22d3ee;
+  --interaction-primary-dark: #0891b2;
+  --interaction-shadow: rgba(6, 182, 212, 0.3);
+  --interaction-duration: 0.25s;
+  --interaction-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   按钮交互 - Button Interactions
+   ======================================== */
+
+.el-button {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: scale(0.97);
+  }
+  
+  &.el-button--primary {
+    background-color: var(--interaction-primary);
+    border-color: var(--interaction-primary);
+    
+    &:hover {
+      background-color: var(--interaction-primary-light);
+      border-color: var(--interaction-primary-light);
+      box-shadow: 0 6px 16px var(--interaction-shadow);
+    }
+    
+    &:active {
+      background-color: var(--interaction-primary-dark);
+      border-color: var(--interaction-primary-dark);
+    }
+  }
+}
+
+/* 加载按钮脉冲动画 */
+.el-button.is-loading {
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: inherit;
+    opacity: 0.5;
+    animation: button-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes button-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+}
+
+/* ========================================
+   输入框交互 - Input Interactions
+   ======================================== */
+
+.el-input__wrapper {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  &:hover {
+    box-shadow: 0 0 0 1px var(--interaction-primary-light) inset;
+  }
+  
+  &.is-focus {
+    box-shadow: 0 0 0 1px var(--interaction-primary) inset !important;
+  }
+}
+
+/* ========================================
+   表格交互 - Table Interactions
+   ======================================== */
+
+.el-table {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  .el-table__body tr {
+    transition: all var(--interaction-duration) var(--interaction-ease);
+    
+    &:hover > td {
+      background-color: rgba(6, 182, 212, 0.08) !important;
+      transform: scale(1);
+    }
+    
+    &.el-table__row--striped > td {
+      background-color: rgba(6, 182, 212, 0.04) !important;
+    }
+  }
+  
+  /* 表头交互 */
+  .el-table__header-wrapper th {
+    transition: all var(--interaction-duration) var(--interaction-ease);
+    
+    &:hover {
+      background-color: rgba(6, 182, 212, 0.12) !important;
+    }
+  }
+  
+  /* 排序图标动画 */
+  .caret-wrapper {
+    transition: transform 0.3s var(--interaction-ease);
+  }
+  
+  .ascending .caret-wrapper {
+    transform: rotate(0deg);
+  }
+  
+  .descending .caret-wrapper {
+    transform: rotate(180deg);
+  }
+}
+
+/* ========================================
+   卡片交互 - Card Interactions
+   ======================================== */
+
+.el-card {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+    border-color: var(--interaction-primary-light) !important;
+  }
+}
+
+/* 仪表盘卡片入场动画 */
+.dashboard-card {
+  animation: card-fade-in 0.5s var(--interaction-ease) backwards;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+}
+
+@keyframes card-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 卡片悬停效果 */
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(6, 182, 212, 0.2) !important;
+}
+
+/* ========================================
+   对话框交互 - Dialog Transitions
+   ======================================== */
+
+.el-dialog {
+  transition: all 0.3s var(--interaction-ease);
+  
+  &.dialog-fade-enter-active {
+    animation: dialog-fade-in 0.3s var(--interaction-ease);
+  }
+  
+  &.dialog-fade-leave-active {
+    animation: dialog-fade-out 0.2s var(--interaction-ease);
+  }
+  
+  .el-dialog__header {
+    transition: background-color var(--interaction-duration) var(--interaction-ease);
+    
+    &:hover {
+      background-color: rgba(6, 182, 212, 0.05);
+    }
+  }
+}
+
+@keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dialog-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* ========================================
+   分页交互 - Pagination Interactions
+   ======================================== */
+
+.el-pagination {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  .el-pager li {
+    transition: all var(--interaction-duration) var(--interaction-ease);
+    
+    &:hover {
+      color: var(--interaction-primary);
+      transform: scale(1.1);
+    }
+    
+    &.is-active {
+      background-color: var(--interaction-primary);
+      color: #fff;
+    }
+  }
+  
+  .btn-prev,
+  .btn-next {
+    transition: all var(--interaction-duration) var(--interaction-ease);
+    
+    &:hover {
+      color: var(--interaction-primary);
+    }
+  }
+}
+
+/* ========================================
+   标签交互 - Tag Interactions
+   ======================================== */
+
+.el-tag {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  &.el-tag--primary {
+    &:hover {
+      background-color: var(--interaction-primary-light);
+      border-color: var(--interaction-primary-light);
+    }
+  }
+}
+
+/* ========================================
+   开关交互 - Switch Interactions
+   ======================================== */
+
+.el-switch {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  &.is-checked .el-switch__core {
+    background-color: var(--interaction-primary);
+    border-color: var(--interaction-primary);
+  }
+}
+
+/* ========================================
+   下拉菜单交互 - Dropdown Interactions
+   ======================================== */
+
+.el-dropdown-menu__item {
+  transition: all var(--interaction-duration) var(--interaction-ease);
+  
+  &:hover {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--interaction-primary);
+    transform: translateX(4px);
+  }
+}
+
+/* ========================================
+   树形组件交互 - Tree Interactions
+   ======================================== */
+
+.el-tree {
+  .el-tree-node__content {
+    transition: all var(--interaction-duration) var(--interaction-ease);
+    
+    &:hover {
+      background-color: rgba(6, 182, 212, 0.1);
+    }
+  }
+  
+  .el-tree-node.is-current > .el-tree-node__content {
+    background-color: rgba(6, 182, 212, 0.15) !important;
+  }
+}
+
+/* ========================================
+   工具提示交互 - Tooltip Interactions
+   ======================================== */
+
+.el-tooltip__popper {
+  transition: opacity 0.2s, transform 0.2s;
+  
+  &.is-light {
+    border-color: var(--interaction-primary);
+  }
+}
+
+/* ========================================
+   消息提示 - Message Interactions
+   ======================================== */
+
+.el-message {
+  transition: all 0.3s var(--interaction-ease);
+  
+  &.el-message--success {
+    border-color: var(--interaction-primary);
+    
+    .el-message__content {
+      color: var(--interaction-primary);
+    }
+  }
+}
+
+/* ========================================
+   加载动画 - Loading Animations
+   ======================================== */
+
+.el-loading-mask {
+  animation: loading-fade-in 0.3s var(--interaction-ease);
+}
+
+@keyframes loading-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.el-loading-spinner {
+  .circular {
+    animation: circle-rotate 1.5s linear infinite;
+  }
+}
+
+@keyframes circle-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   页面切换过渡 - Page Transitions
+   ======================================== */
+
+.fade-transform-enter-active,
+.fade-transform-leave-active {
+  transition: all 0.3s var(--interaction-ease);
+}
+
+.fade-transform-enter-from {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(10px);
+}
+
+/* 淡入淡出 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s var(--interaction-ease);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 滑动过渡 */
+.slide-fade-enter-active {
+  transition: all 0.3s var(--interaction-ease);
+}
+
+.slide-fade-leave-active {
+  transition: all 0.2s var(--interaction-ease);
+}
+
+.slide-fade-enter-from {
+  transform: translateY(20px);
+  opacity: 0;
+}
+
+.slide-fade-leave-to {
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+/* ========================================
+   滚动条美化 - Scrollbar Styling
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(6, 182, 212, 0.4);
+  border-radius: 3px;
+  
+  &:hover {
+    background: rgba(6, 182, 212, 0.6);
+  }
+}
+
+/* ========================================
+   数字计数动画 - Counter Animation
+   ======================================== */
+
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.count-up {
+  animation: count-up 0.6s var(--interaction-ease) backwards;
+}

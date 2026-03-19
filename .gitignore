@@ -1,0 +1,77 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Node / Frontend
+node_modules/
+dist/
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+.npm/
+.yarn/
+.pnp.*
+
+# Java / Backend
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+logs/
+
+# Spring Boot
+ruoyi-ui/
+!RuoYi-Vue-springboot3/ruoyi-ui/
+
+# Environment files (keep .env.example, ignore .env.local etc.)
+.env
+.env.local
+.env.*.local
+deploy/.env
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+*.pid
+app.log
+app.pid
+test-result.txt
+
+# Build outputs
+*.class
+*.o
+*.so
+*.dll
+*.exe
+
+# System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Tool directories (local only, don't sync)
+.npm-cache/
+.qoder/
+.claude/
+skills/
+modes.md
+
+# Git
+*.orig
+*.patch
+
+# Documentation files (optional, comment out if needed)
+# *.md
