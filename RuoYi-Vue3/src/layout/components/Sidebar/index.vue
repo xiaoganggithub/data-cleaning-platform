@@ -248,52 +248,6 @@ const activeMenu = computed(() => {
       }
     }
   }
-
-  :deep(.el-collapse-transition) {
-    transition: none !important;
-  }
-}
-      }
-    }
-
-    &:is(.is-active) {
-      > .el-sub-menu__title {
-        color: #22d3ee !important;
-      }
-    }
-  }
-
-  :deep(.el-menu--inline) {
-    background: transparent !important;
-    padding: 0;
-    border: none;
-
-    .el-menu-item {
-      padding-left: 48px !important;
-      height: 42px;
-      line-height: 42px;
-      margin: 2px 0;
-      font-size: 13px;
-      background: transparent !important;
-
-      &::before {
-        display: none;
-      }
-
-      &.is-active {
-        background: rgba(6, 182, 212, 0.08) !important;
-        color: #22d3ee !important;
-
-        &::after {
-          display: none;
-        }
-      }
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.06) !important;
-      }
-    }
-  }
 }
 
 :deep(.el-scrollbar__bar) {
