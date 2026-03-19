@@ -208,6 +208,7 @@ const activeMenu = computed(() => {
     .el-sub-menu__title {
       .sub-menu-icon {
         transform: rotate(0deg);
+        transition: transform 0.3s ease;
 
         &.is-active {
           transform: rotate(90deg);
@@ -215,28 +216,41 @@ const activeMenu = computed(() => {
       }
     }
 
-    .el-menu {
+    &:is(.is-active) {
+      > .el-sub-menu__title {
+        color: #22d3ee !important;
+      }
+    }
+  }
+
+  :deep(.el-menu--inline) {
+    background: transparent !important;
+    padding: 0;
+    border: none;
+
+    .el-menu-item {
+      padding-left: 48px !important;
+      height: 42px;
+      line-height: 42px;
+      margin: 2px 0;
+      font-size: 13px;
       background: transparent !important;
-      padding: 0;
 
-      .el-menu-item {
-        padding-left: 48px !important;
-        height: 42px;
-        line-height: 42px;
-        margin: 2px 0;
-        font-size: 13px;
+      &::before {
+        display: none;
+      }
 
-        &::before {
+      &.is-active {
+        background: rgba(6, 182, 212, 0.08) !important;
+        color: #22d3ee !important;
+
+        &::after {
           display: none;
         }
+      }
 
-        &.is-active {
-          background: rgba(6, 182, 212, 0.08) !important;
-
-          &::after {
-            display: none;
-          }
-        }
+      &:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
       }
     }
   }
