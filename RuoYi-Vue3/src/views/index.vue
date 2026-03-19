@@ -126,9 +126,11 @@ const stats = ref({
 
 <style scoped lang="scss">
 .home-container {
-  padding: 32px;
-  min-height: calc(100vh - 100px);
+  padding: 24px;
+  margin-top: 60px;
+  min-height: calc(100vh - 60px);
   animation: fadeIn 0.6s ease-out;
+  box-sizing: border-box;
 }
 
 @keyframes fadeIn {

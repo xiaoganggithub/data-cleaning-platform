@@ -257,4 +257,44 @@ const activeMenu = computed(() => {
     opacity: 0.5;
   }
 }
+
+:deep(.el-menu--vertical) {
+  .el-sub-menu__title {
+    &:hover {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+  }
+}
+
+:deep(.el-menu--inline) {
+  background: transparent !important;
+  border: none !important;
+  padding-left: 16px;
+  margin-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+
+  > .el-menu-item {
+    padding-left: 24px !important;
+    height: 42px;
+    line-height: 42px;
+    margin: 2px 0;
+    font-size: 13px;
+    background: transparent !important;
+    border-radius: 8px;
+
+    &::before {
+      display: none;
+    }
+
+    &.is-active {
+      background: rgba(6, 182, 212, 0.08) !important;
+      color: #22d3ee !important;
+      border-radius: 8px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+  }
+}
 </style>
