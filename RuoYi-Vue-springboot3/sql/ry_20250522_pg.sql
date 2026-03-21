@@ -672,3 +672,432 @@ CREATE TABLE gen_table_column (
   update_time       TIMESTAMP(0)        WITHOUT TIME ZONE,
   PRIMARY KEY (column_id)
 );
+
+-- ==========================================
+-- 瑶池智浣数据清洗平台 - 新增表
+-- ==========================================
+
+-- 1. 数据集表
+DROP TABLE IF EXISTS dataset CASCADE;
+CREATE TABLE dataset (
+    dataset_id BIGSERIAL PRIMARY KEY,
+    dataset_code VARCHAR(64) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    status SMALLINT NOT NULL DEFAULT 0 CHECK (status IN (0, 1, 2, 3, 4, 5, 6)),
+    total_image_count INTEGER NOT NULL DEFAULT 0,
+    cleaned_image_count INTEGER NOT NULL DEFAULT 0,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_dataset_code ON dataset(dataset_code);
+CREATE INDEX idx_dataset_status ON dataset(status);
+CREATE INDEX idx_dataset_create_time ON dataset(create_time DESC);
+
+-- 2. 商品图片分类表
+DROP TABLE IF EXISTS product_category CASCADE;
+CREATE TABLE product_category (
+    category_id BIGSERIAL PRIMARY KEY,
+    dataset_id BIGINT NOT NULL REFERENCES dataset(dataset_id) ON DELETE CASCADE,
+    dataset_code VARCHAR(64) NOT NULL,
+    plu_code VARCHAR(64) NOT NULL,
+    plu_name VARCHAR(255) NOT NULL,
+    total_image_count INTEGER NOT NULL DEFAULT 0,
+    cleaned_image_count INTEGER NOT NULL DEFAULT 0,
+    status SMALLINT NOT NULL DEFAULT 0 CHECK (status IN (0, 1, 2)),
+    locked BOOLEAN DEFAULT false,
+    sample_score DECIMAL(5,2) DEFAULT 0,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(dataset_code, plu_code)
+);
+
+CREATE INDEX idx_category_dataset_id ON product_category(dataset_id);
+CREATE INDEX idx_category_dataset_code ON product_category(dataset_code);
+CREATE INDEX idx_category_status ON product_category(status);
+CREATE INDEX idx_category_locked ON product_category(locked);
+
+-- 3. 数据分片表
+DROP TABLE IF EXISTS data_shard CASCADE;
+CREATE TABLE data_shard (
+    shard_id BIGSERIAL PRIMARY KEY,
+    dataset_id BIGINT NOT NULL REFERENCES dataset(dataset_id) ON DELETE CASCADE,
+    dataset_code VARCHAR(64) NOT NULL,
+    category_id BIGINT NOT NULL REFERENCES product_category(category_id) ON DELETE CASCADE,
+    plu_code VARCHAR(64) NOT NULL,
+    plu_name VARCHAR(255) NOT NULL,
+    status SMALLINT NOT NULL DEFAULT 0 CHECK (status IN (0, 1, 2)),
+    total_image_count INTEGER NOT NULL DEFAULT 0,
+    cleaned_image_count INTEGER NOT NULL DEFAULT 0,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(dataset_code, plu_code)
+);
+
+CREATE INDEX idx_shard_dataset_id ON data_shard(dataset_id);
+CREATE INDEX idx_shard_dataset_code ON data_shard(dataset_code);
+CREATE INDEX idx_shard_category_id ON data_shard(category_id);
+CREATE INDEX idx_shard_status ON data_shard(status);
+
+-- 4. 标签表
+DROP TABLE IF EXISTS tag CASCADE;
+CREATE TABLE tag (
+    tag_id BIGSERIAL PRIMARY KEY,
+    tag_name VARCHAR(100) NOT NULL,
+    tag_color VARCHAR(7) DEFAULT '#409EFF',
+    tag_type SMALLINT NOT NULL DEFAULT 1 CHECK (tag_type IN (0, 1)),
+    tag_description TEXT,
+    parent_tag_id BIGINT REFERENCES tag(tag_id) ON DELETE CASCADE,
+    sort_order INTEGER DEFAULT 0,
+    create_user_id BIGINT NOT NULL,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(tag_name, parent_tag_id)
+);
+
+CREATE INDEX idx_tag_parent_id ON tag(parent_tag_id);
+CREATE INDEX idx_tag_type ON tag(tag_type);
+CREATE INDEX idx_tag_create_user_id ON tag(create_user_id);
+CREATE INDEX idx_tag_name ON tag(tag_name);
+
+-- 5. 分类标签关联表
+DROP TABLE IF EXISTS category_tag_rel CASCADE;
+CREATE TABLE category_tag_rel (
+    rel_id BIGSERIAL PRIMARY KEY,
+    category_id BIGINT NOT NULL REFERENCES product_category(category_id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tag(tag_id) ON DELETE CASCADE,
+    create_user_id BIGINT NOT NULL,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(category_id, tag_id)
+);
+
+CREATE INDEX idx_category_tag_category_id ON category_tag_rel(category_id);
+CREATE INDEX idx_category_tag_tag_id ON category_tag_rel(tag_id);
+
+-- 6. 图片标签关联表
+DROP TABLE IF EXISTS image_tag_rel CASCADE;
+CREATE TABLE image_tag_rel (
+    rel_id BIGSERIAL PRIMARY KEY,
+    image_id BIGINT NOT NULL REFERENCES product_image(image_id) ON DELETE CASCADE,
+    tag_id BIGINT NOT NULL REFERENCES tag(tag_id) ON DELETE CASCADE,
+    create_user_id BIGINT NOT NULL,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(image_id, tag_id)
+);
+
+CREATE INDEX idx_image_tag_image_id ON image_tag_rel(image_id);
+CREATE INDEX idx_image_tag_tag_id ON image_tag_rel(tag_id);
+
+-- 7. AI清洗评分表
+DROP TABLE IF EXISTS ai_clean_score CASCADE;
+CREATE TABLE ai_clean_score (
+    score_id BIGSERIAL PRIMARY KEY,
+    image_id BIGINT NOT NULL UNIQUE,
+    dataset_code VARCHAR(64) NOT NULL,
+    clarity_score SMALLINT NOT NULL DEFAULT 0 CHECK (clarity_score >= 0 AND clarity_score <= 100),
+    completeness_score SMALLINT NOT NULL DEFAULT 0 CHECK (completeness_score >= 0 AND completeness_score <= 100),
+    quality_score SMALLINT NOT NULL DEFAULT 0 CHECK (quality_score >= 0 AND quality_score <= 100),
+    problem_tags JSONB,
+    cleaning_suggestion TEXT,
+    model_version VARCHAR(50) NOT NULL,
+    score_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_ai_score_image_id ON ai_clean_score(image_id);
+CREATE INDEX idx_ai_score_dataset_code ON ai_clean_score(dataset_code);
+CREATE INDEX idx_ai_score_quality ON ai_clean_score(quality_score);
+
+-- 8. 数据质量评估表
+DROP TABLE IF EXISTS data_quality_assessment CASCADE;
+CREATE TABLE data_quality_assessment (
+    assessment_id BIGSERIAL PRIMARY KEY,
+    dataset_id BIGINT NOT NULL REFERENCES dataset(dataset_id) ON DELETE CASCADE,
+    dataset_code VARCHAR(64) NOT NULL,
+    completeness_score SMALLINT NOT NULL DEFAULT 0 CHECK (completeness_score >= 0 AND completeness_score <= 100),
+    accuracy_score SMALLINT NOT NULL DEFAULT 0 CHECK (accuracy_score >= 0 AND accuracy_score <= 100),
+    consistency_score SMALLINT NOT NULL DEFAULT 0 CHECK (consistency_score >= 0 AND consistency_score <= 100),
+    timeliness_score SMALLINT NOT NULL DEFAULT 0 CHECK (timeliness_score >= 0 AND timeliness_score <= 100),
+    uniqueness_score SMALLINT NOT NULL DEFAULT 0 CHECK (uniqueness_score >= 0 AND uniqueness_score <= 100),
+    overall_score SMALLINT NOT NULL DEFAULT 0 CHECK (overall_score >= 0 AND overall_score <= 100),
+    quality_report JSONB,
+    assessment_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(dataset_id, assessment_time)
+);
+
+CREATE INDEX idx_quality_dataset_id ON data_quality_assessment(dataset_id);
+CREATE INDEX idx_quality_time ON data_quality_assessment(assessment_time DESC);
+CREATE INDEX idx_quality_score ON data_quality_assessment(overall_score);
+
+-- 9. 数据处理跟踪表
+DROP TABLE IF EXISTS data_process_trace CASCADE;
+CREATE TABLE data_process_trace (
+    trace_id BIGSERIAL PRIMARY KEY,
+    record_id VARCHAR(128) NOT NULL UNIQUE,
+    dataset_code VARCHAR(64) NOT NULL,
+    original_data JSONB,
+    processed_data JSONB,
+    process_nodes JSONB NOT NULL,
+    total_duration_ms BIGINT NOT NULL DEFAULT 0,
+    overall_status SMALLINT NOT NULL DEFAULT 0 CHECK (overall_status IN (0, 1)),
+    error_message TEXT,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_trace_record_id ON data_process_trace(record_id);
+CREATE INDEX idx_trace_dataset_code ON data_process_trace(dataset_code);
+CREATE INDEX idx_trace_status ON data_process_trace(overall_status);
+CREATE INDEX idx_trace_time ON data_process_trace(create_time DESC);
+
+-- 10. 产品图片表（分区表）
+DROP TABLE IF EXISTS product_image CASCADE;
+CREATE TABLE product_image (
+    image_id BIGSERIAL PRIMARY KEY,
+    dataset_id BIGINT NOT NULL REFERENCES dataset(dataset_id) ON DELETE CASCADE,
+    dataset_code VARCHAR(64) NOT NULL,
+    category_id BIGINT NOT NULL REFERENCES product_category(category_id) ON DELETE CASCADE,
+    plu_code VARCHAR(64) NOT NULL,
+    plu_name VARCHAR(255) NOT NULL,
+    shard_id BIGINT NOT NULL REFERENCES data_shard(shard_id) ON DELETE CASCADE,
+    shopcode VARCHAR(64) NOT NULL,
+    vendorcode VARCHAR(64) NOT NULL,
+    sn VARCHAR(64) NOT NULL,
+    image_md5 VARCHAR(32) NOT NULL,
+    image_url VARCHAR(1024) NOT NULL,
+    image_status SMALLINT NOT NULL DEFAULT 0 CHECK (image_status IN (0, 1, 2)),
+    locked BOOLEAN DEFAULT false,
+    create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status SMALLINT DEFAULT 0 CHECK (status IN (0, 1)),
+    UNIQUE(dataset_code, image_md5)
+) PARTITION BY RANGE (create_time);
+
+CREATE INDEX idx_product_image_dataset_id ON product_image(dataset_id);
+CREATE INDEX idx_product_image_category_id ON product_image(category_id);
+CREATE INDEX idx_product_image_shard_id ON product_image(shard_id);
+CREATE INDEX idx_product_image_status ON product_image(image_status);
+CREATE INDEX idx_product_image_create_time ON product_image(create_time DESC);
+CREATE INDEX idx_product_image_dataset_code ON product_image(dataset_code);
+
+-- 11. 创建分区子表（当前年份和下一年）
+DROP TABLE IF EXISTS product_image_2026 CASCADE;
+CREATE TABLE product_image_2026 PARTITION OF product_image
+    FOR VALUES FROM ('2026-01-01') TO ('2027-01-01');
+
+DROP TABLE IF EXISTS product_image_2027 CASCADE;
+CREATE TABLE product_image_2027 PARTITION OF product_image
+    FOR VALUES FROM ('2027-01-01') TO ('2028-01-01');
+
+-- 12. 创建数据库触发器函数
+DROP FUNCTION IF EXISTS update_updated_at_column();
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.update_time = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 为所有表创建更新时间触发器
+CREATE TRIGGER update_dataset_update_time BEFORE UPDATE ON dataset
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_product_category_update_time BEFORE UPDATE ON product_category
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_data_shard_update_time BEFORE UPDATE ON data_shard
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_tag_update_time BEFORE UPDATE ON tag
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_ai_clean_score_update_time BEFORE UPDATE ON ai_clean_score
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_data_quality_assessment_update_time BEFORE UPDATE ON data_quality_assessment
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_data_process_trace_update_time BEFORE UPDATE ON data_process_trace
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- 13. 创建函数：根据数据集编码创建临时表
+DROP FUNCTION IF EXISTS create_dataset_temp_table(VARCHAR);
+CREATE OR REPLACE FUNCTION create_dataset_temp_table(dataset_code_param VARCHAR(64))
+RETURNS VARCHAR AS $$
+DECLARE
+    temp_table_name VARCHAR(100);
+BEGIN
+    temp_table_name := 'dataset_temp_' || dataset_code_param;
+
+    -- 检查临时表是否已存在
+    IF EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = temp_table_name
+    ) THEN
+        RAISE NOTICE '临时表 % 已存在，跳过创建', temp_table_name;
+        RETURN temp_table_name;
+    END IF;
+
+    -- 创建临时表
+    EXECUTE format('
+        CREATE TABLE %I (
+            shopcode VARCHAR(64) NOT NULL,
+            vendorcode VARCHAR(64) NOT NULL,
+            sn VARCHAR(64) NOT NULL,
+            image_md5 VARCHAR(32) NOT NULL,
+            image_url VARCHAR(1024) NOT NULL,
+            image_time TIMESTAMP NOT NULL,
+            CONSTRAINT %I PRIMARY KEY (shopcode, image_md5)
+        )
+    ', temp_table_name, temp_table_name);
+
+    EXECUTE format('
+        CREATE INDEX idx_%I_shopcode ON %I(shopcode)
+    ', temp_table_name, temp_table_name);
+
+    EXECUTE format('
+        CREATE INDEX idx_%I_image_md5 ON %I(image_md5)
+    ', temp_table_name, temp_table_name);
+
+    EXECUTE format('
+        CREATE INDEX idx_%I_image_time ON %I(image_time DESC)
+    ', temp_table_name, temp_table_name);
+
+    RAISE NOTICE '临时表 % 创建成功', temp_table_name;
+    RETURN temp_table_name;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 14. 创建函数：删除临时表
+DROP FUNCTION IF EXISTS drop_dataset_temp_table(VARCHAR);
+CREATE OR REPLACE FUNCTION drop_dataset_temp_table(dataset_code_param VARCHAR(64))
+RETURNS BOOLEAN AS $$
+DECLARE
+    temp_table_name VARCHAR(100);
+BEGIN
+    temp_table_name := 'dataset_temp_' || dataset_code_param;
+
+    -- 检查临时表是否存在
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = temp_table_name
+    ) THEN
+        RAISE NOTICE '临时表 % 不存在', temp_table_name;
+        RETURN false;
+    END IF;
+
+    -- 删除临时表
+    EXECUTE format('DROP TABLE IF EXISTS %I CASCADE', temp_table_name);
+
+    RAISE NOTICE '临时表 % 删除成功', temp_table_name;
+    RETURN true;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 15. 创建函数：检查临时表是否过期（7天未使用）
+DROP FUNCTION IF EXISTS check_temp_table_expiry(VARCHAR);
+CREATE OR REPLACE FUNCTION check_temp_table_expiry(dataset_code_param VARCHAR(64))
+RETURNS BOOLEAN AS $$
+DECLARE
+    temp_table_name VARCHAR(100);
+    last_used_time TIMESTAMP;
+    days_diff INTEGER;
+BEGIN
+    temp_table_name := 'dataset_temp_' || dataset_code_param;
+
+    -- 获取最后更新时间
+    SELECT MAX(image_time) INTO last_used_time
+    FROM temp_table_name;
+
+    -- 如果表为空或没有image_time字段，视为过期
+    IF last_used_time IS NULL THEN
+        RETURN true;
+    END IF;
+
+    -- 计算天数差
+    days_diff := EXTRACT(DAY FROM (CURRENT_TIMESTAMP - last_used_time));
+
+    -- 超过7天未使用，返回true
+    RETURN days_diff >= 10;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 16. 创建函数：清理过期临时表
+DROP FUNCTION IF EXISTS clean_expired_temp_tables();
+CREATE OR REPLACE FUNCTION clean_expired_temp_tables()
+RETURNS TABLE (
+    cleaned_count INTEGER,
+    not_found_count INTEGER
+) AS $$
+DECLARE
+    temp_table_name TEXT;
+    last_used_time TIMESTAMP;
+    days_diff INTEGER;
+    cleaned_count INTEGER := 0;
+    not_found_count INTEGER := 0;
+BEGIN
+    -- 查询所有以dataset_temp_开头的表
+    FOR temp_table_name IN
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name LIKE 'dataset_temp_%'
+    LOOP
+        -- 检查是否过期
+        EXECUTE format('SELECT check_temp_table_expiry(%L)', temp_table_name)
+        INTO days_diff;
+
+        IF days_diff THEN
+            -- 删除过期临时表
+            EXECUTE format('DROP TABLE IF EXISTS %I CASCADE', temp_table_name);
+            cleaned_count := cleaned_count + 1;
+        END IF;
+    END LOOP;
+
+    -- 统计未找到的表数量（假设最多10个）
+    not_found_count := 10 - cleaned_count;
+
+    RETURN QUERY SELECT cleaned_count, not_found_count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 17. 插入初始系统标签
+DROP TABLE IF EXISTS tag;
+INSERT INTO tag (tag_name, tag_color, tag_type, tag_description, sort_order, create_user_id)
+VALUES
+    ('质量', '#f56c6c', 0, '质量相关标签', 1, 1),
+    ('清晰度', '#67c23a', 1, '清晰度标签', 2, 1),
+    ('模糊', '#e6a23c', 0, '图片模糊', 1, 1),
+    ('遮挡', '#909399', 0, '图片遮挡', 2, 1),
+    ('过曝', '#f56c6c', 0, '图片过曝', 3, 1),
+    ('欠曝', '#e6a23c', 0, '图片欠曝', 4, 1),
+    ('采集', '#409EFF', 0, '数据来源标签', 5, 1),
+    ('训练集', '#67c23a', 0, '训练数据集', 6, 1),
+    ('测试集', '#e6a23c', 0, '测试数据集', 7, 1),
+    ('验证集', '#909399', 0, '验证数据集', 8, 1);
+
+-- 18. 显示数据库状态
+SELECT '瑶池智浣数据清洗平台数据库初始化完成' AS status,
+       COUNT(*) AS table_count
+FROM information_schema.tables
+WHERE table_schema = 'public'
+AND table_type = 'BASE TABLE';
+
+-- 查看所有表
+SELECT table_name,
+       (SELECT COUNT(*) FROM information_schema.columns
+        WHERE table_name = t.table_name AND table_schema = 'public')
+       AS column_count
+FROM information_schema.tables t
+WHERE table_schema = 'public'
+AND table_type = 'BASE TABLE'
+ORDER BY table_name;
+
+-- ==========================================
+-- 瑶池智浣数据清洗平台数据库初始化完成
+-- ==========================================

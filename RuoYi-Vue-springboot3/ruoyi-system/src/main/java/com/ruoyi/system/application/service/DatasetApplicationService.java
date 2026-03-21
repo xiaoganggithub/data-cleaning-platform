@@ -1,0 +1,217 @@
+package com.ruoyi.system.application.service;
+
+import com.ruoyi.system.domain.entity.Dataset;
+import com.ruoyi.system.domain.repository.DatasetRepository;
+import com.ruoyi.system.domain.service.DatasetDomainService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Map;
+
+/**
+ * 数据集应用服务
+ * 负责数据集业务用例的编排和事务管理
+ */
+@Service
+public class DatasetApplicationService {
+
+    private final DatasetRepository datasetRepository;
+
+    public DatasetApplicationService(DatasetRepository datasetRepository) {
+        this.datasetRepository = datasetRepository;
+    }
+
+    /**
+     * 创建数据集
+     */
+    @Transactional
+    public Dataset createDataset(String name, String description) {
+        // Validate
+        DatasetDomainService.validateDatasetName(name);
+        DatasetDomainService.validateDatasetDescription(description);
+
+        // Generate dataset code
+        String datasetCode = generateDatasetCode();
+
+        // Create domain entity
+        Dataset dataset = new Dataset(datasetCode, name, description);
+
+        // Save and return
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 初始化数据集
+     */
+    @Transactional
+    public Dataset initializeDataset(Long datasetId) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.initialize();
+
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 开始清洗数据集
+     */
+    @Transactional
+    public Dataset startCleaning(Long datasetId) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.startCleaning();
+
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 完成清洗
+     */
+    @Transactional
+    public Dataset completeCleaning(Long datasetId, int cleanedImageCount) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.completeCleaning(cleanedImageCount);
+
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 审核通过
+     */
+    @Transactional
+    public Dataset approve(Long datasetId) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.approve();
+
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 发布数据集
+     */
+    @Transactional
+    public Dataset publish(Long datasetId) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.publish();
+
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 归档数据集
+     */
+    @Transactional
+    public Dataset archive(Long datasetId) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.archive();
+
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 删除数据集
+     */
+    @Transactional
+    public void deleteDataset(Long datasetId) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.delete();
+        datasetRepository.save(dataset);
+    }
+
+    /**
+     * 更新统计信息
+     */
+    @Transactional
+    public Dataset updateStatistics(Long datasetId, int totalImageCount, int cleanedImageCount) {
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
+
+        dataset.updateStatistics(totalImageCount, cleanedImageCount);
+
+        return datasetRepository.save(dataset);
+    }
+
+    /**
+     * 查询数据集
+     */
+    public Optional<Dataset> findById(Long datasetId) {
+        return datasetRepository.findById(datasetId);
+    }
+
+    /**
+     * 根据编码查询数据集
+     */
+    public Optional<Dataset> findByCode(String datasetCode) {
+        return datasetRepository.findByCode(datasetCode);
+    }
+
+    /**
+     * 查询所有数据集
+     */
+    public List<Dataset> findAll() {
+        return datasetRepository.findAll();
+    }
+
+    /**
+     * 根据状态查询数据集
+     */
+    public List<Dataset> findByStatus(Dataset.DatasetStatus status) {
+        return datasetRepository.findByStatus(status);
+    }
+
+    /**
+     * 分页查询数据集
+     */
+    public List<Dataset> findByPage(int page, int size) {
+        return datasetRepository.findByPage(page, size);
+    }
+
+    /**
+     * 统计数据集数量
+     */
+    public long count() {
+        return datasetRepository.count();
+    }
+
+    /**
+     * 各状态统计
+     */
+    public Map<Dataset.DatasetStatus, Long> countByStatus() {
+        return datasetRepository.countByStatus();
+    }
+
+    /**
+     * 生成数据集编码
+     */
+    private String generateDatasetCode() {
+        // 使用时间戳+随机数生成6位编码
+        String timestamp = String.valueOf(System.currentTimeMillis());
+        String random = String.valueOf((int) (Math.random() * 100));
+        String code = (timestamp + random).substring(0, 6).toUpperCase();
+
+        // 确保编码唯一
+        while (datasetRepository.existsByCode(code)) {
+            code = String.valueOf((int) (Math.random() * 1000000)).toUpperCase();
+            while (code.length() < 6) {
+                code = "0" + code;
+            }
+        }
+
+        return code;
+    }
+}
