@@ -3,8 +3,10 @@ package com.ruoyi.web.controller.system;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.application.service.DatasetApplicationService;
 import com.ruoyi.system.domain.entity.Dataset;
+import com.ruoyi.system.domain.entity.DatasetStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +54,8 @@ public class DatasetController {
      * 完成清洗
      */
     @PostMapping("/{datasetId}/complete-cleaning")
-    public AjaxResult completeCleaning(@PathVariable Long datasetId, @RequestBody CompleteCleaningRequest request) {
-        Dataset dataset = datasetService.completeCleaning(datasetId, request.getCleanedImageCount());
+    public AjaxResult completeCleaning(@PathVariable Long datasetId) {
+        Dataset dataset = datasetService.completeCleaning(datasetId);
         return AjaxResult.success(dataset);
     }
 
@@ -127,19 +129,40 @@ public class DatasetController {
      */
     @GetMapping("/list/{status}")
     public AjaxResult listByStatus(@PathVariable Integer status) {
-        Dataset.DatasetStatus datasetStatus = Dataset.DatasetStatus.fromValue(status);
+        DatasetStatus datasetStatus = DatasetStatus.fromValue(status);
         List<Dataset> datasets = datasetService.findByStatus(datasetStatus);
         return AjaxResult.success(datasets);
     }
 
     /**
-     * 分页查询
+     * 分页查询（支持搜索）
      */
     @GetMapping("/page")
-    public AjaxResult pageDatasets(@RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(defaultValue = "10") int size) {
-        List<Dataset> datasets = datasetService.findByPage(page, size);
-        return AjaxResult.success(datasets);
+    public AjaxResult pageDatasets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String datasetCode,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String beginTime,
+            @RequestParam(required = false) String endTime) {
+        List<Dataset> datasets;
+        long total = 0;
+        // 如果有搜索条件，使用搜索分页
+        if ((datasetCode != null && !datasetCode.isBlank()) ||
+            (name != null && !name.isBlank()) ||
+            (beginTime != null && !beginTime.isBlank()) ||
+            (endTime != null && !endTime.isBlank())) {
+            datasets = datasetService.searchByPage(datasetCode, name, beginTime, endTime, page, size);
+            total = datasetService.countSearch(datasetCode, name, beginTime, endTime);
+        } else {
+            datasets = datasetService.findByPage(page, size);
+            total = datasetService.count();
+        }
+        // 返回分页结果
+        Map<String, Object> result = new HashMap<>();
+        result.put("rows", datasets);
+        result.put("total", total);
+        return AjaxResult.success(result);
     }
 
     /**
@@ -156,7 +179,7 @@ public class DatasetController {
      */
     @GetMapping("/statistics/status")
     public AjaxResult statisticsByStatus() {
-        Map<Dataset.DatasetStatus, Long> statistics = datasetService.countByStatus();
+        Map<DatasetStatus, Long> statistics = datasetService.countByStatus();
         return AjaxResult.success(statistics);
     }
 

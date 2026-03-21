@@ -3,6 +3,7 @@ package com.ruoyi.system.persistence.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.system.domain.entity.Dataset;
+import com.ruoyi.system.domain.entity.DatasetStatus;
 import com.ruoyi.system.domain.repository.DatasetRepository;
 import com.ruoyi.system.persistence.mapper.DatasetMapper;
 import com.ruoyi.system.persistence.po.DatasetPO;
@@ -53,7 +54,7 @@ public class DatasetRepositoryImpl implements DatasetRepository {
     }
 
     @Override
-    public List<Dataset> findByStatus(Dataset.DatasetStatus status) {
+    public List<Dataset> findByStatus(DatasetStatus status) {
         LambdaQueryWrapper<DatasetPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(DatasetPO::getStatus, status.getValue());
         return datasetMapper.selectList(wrapper).stream()
@@ -62,9 +63,9 @@ public class DatasetRepositoryImpl implements DatasetRepository {
     }
 
     @Override
-    public List<Dataset> findByStatuses(List<Dataset.DatasetStatus> statuses) {
+    public List<Dataset> findByStatuses(List<DatasetStatus> statuses) {
         List<Integer> statusValues = statuses.stream()
-                .map(Dataset.DatasetStatus::getValue)
+                .map(DatasetStatus::getValue)
                 .collect(Collectors.toList());
         LambdaQueryWrapper<DatasetPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(DatasetPO::getStatus, statusValues);
@@ -92,19 +93,57 @@ public class DatasetRepositoryImpl implements DatasetRepository {
     }
 
     @Override
+    public List<Dataset> searchByPage(String datasetCode, String name, String beginTime, String endTime, int page, int size) {
+        LambdaQueryWrapper<DatasetPO> wrapper = buildSearchWrapper(datasetCode, name, beginTime, endTime);
+        wrapper.orderByDesc(DatasetPO::getCreateTime);
+
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<DatasetPO> pageObj =
+                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page + 1, size);
+        datasetMapper.selectPage(pageObj, wrapper);
+        return pageObj.getRecords().stream()
+                .map(this::toEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public long countSearch(String datasetCode, String name, String beginTime, String endTime) {
+        LambdaQueryWrapper<DatasetPO> wrapper = buildSearchWrapper(datasetCode, name, beginTime, endTime);
+        return datasetMapper.selectCount(wrapper);
+    }
+
+    private LambdaQueryWrapper<DatasetPO> buildSearchWrapper(String datasetCode, String name, String beginTime, String endTime) {
+        LambdaQueryWrapper<DatasetPO> wrapper = new LambdaQueryWrapper<>();
+
+        if (datasetCode != null && !datasetCode.isBlank()) {
+            wrapper.like(DatasetPO::getDatasetCode, datasetCode);
+        }
+        if (name != null && !name.isBlank()) {
+            wrapper.like(DatasetPO::getName, name);
+        }
+        if (beginTime != null && !beginTime.isBlank()) {
+            wrapper.ge(DatasetPO::getCreateTime, beginTime + " 00:00:00");
+        }
+        if (endTime != null && !endTime.isBlank()) {
+            wrapper.le(DatasetPO::getCreateTime, endTime + " 23:59:59");
+        }
+
+        return wrapper;
+    }
+
+    @Override
     public long count() {
         return datasetMapper.selectCount(null);
     }
 
     @Override
-    public Map<Dataset.DatasetStatus, Long> countByStatus() {
+    public Map<DatasetStatus, Long> countByStatus() {
         List<DatasetPO> all = datasetMapper.selectList(null);
-        Map<Dataset.DatasetStatus, Long> result = new HashMap<>();
-        for (Dataset.DatasetStatus status : Dataset.DatasetStatus.values()) {
+        Map<DatasetStatus, Long> result = new HashMap<>();
+        for (DatasetStatus status : DatasetStatus.values()) {
             result.put(status, 0L);
         }
         for (DatasetPO po : all) {
-            Dataset.DatasetStatus status = Dataset.DatasetStatus.fromValue(po.getStatus());
+            DatasetStatus status = DatasetStatus.fromValue(po.getStatus());
             result.merge(status, 1L, Long::sum);
         }
         return result;

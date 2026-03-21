@@ -2,6 +2,7 @@ package com.ruoyi.system.persistence.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.system.domain.entity.DataShard;
+import com.ruoyi.system.domain.entity.ShardStatus;
 import com.ruoyi.system.domain.repository.DataShardRepository;
 import com.ruoyi.system.persistence.mapper.DataShardMapper;
 import com.ruoyi.system.persistence.po.DataShardPO;
@@ -54,7 +55,7 @@ public class DataShardRepositoryImpl implements DataShardRepository {
     }
 
     @Override
-    public List<DataShard> findByStatus(DataShard.ShardStatus status) {
+    public List<DataShard> findByStatus(ShardStatus status) {
         LambdaQueryWrapper<DataShardPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(DataShardPO::getStatus, status.getValue());
         return shardMapper.selectList(wrapper).stream()
@@ -63,7 +64,7 @@ public class DataShardRepositoryImpl implements DataShardRepository {
     }
 
     @Override
-    public List<DataShard> findByDatasetIdAndStatus(Long datasetId, DataShard.ShardStatus status) {
+    public List<DataShard> findByDatasetIdAndStatus(Long datasetId, ShardStatus status) {
         LambdaQueryWrapper<DataShardPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(DataShardPO::getDatasetId, datasetId);
         wrapper.eq(DataShardPO::getStatus, status.getValue());
@@ -86,17 +87,17 @@ public class DataShardRepositoryImpl implements DataShardRepository {
 
     @Override
     public List<DataShard> findProcessingShards() {
-        return findByStatus(DataShard.ShardStatus.PROCESSING);
+        return findByStatus(ShardStatus.PROCESSING);
     }
 
     @Override
     public List<DataShard> findCompletedShards() {
-        return findByStatus(DataShard.ShardStatus.COMPLETED);
+        return findByStatus(ShardStatus.COMPLETED);
     }
 
     @Override
     public List<DataShard> findFailedShards() {
-        return findByStatus(DataShard.ShardStatus.FAILED);
+        return findByStatus(ShardStatus.FAILED);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class DataShardRepositoryImpl implements DataShardRepository {
     }
 
     @Override
-    public List<DataShard> findByFilter(Long datasetId, DataShard.ShardStatus status, int page, int size) {
+    public List<DataShard> findByFilter(Long datasetId, ShardStatus status, int page, int size) {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<DataShardPO> pageObj =
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page + 1, size);
         LambdaQueryWrapper<DataShardPO> wrapper = new LambdaQueryWrapper<>();
@@ -147,7 +148,7 @@ public class DataShardRepositoryImpl implements DataShardRepository {
     }
 
     @Override
-    public Map<DataShard.ShardStatus, Long> countByStatus(Long datasetId) {
+    public Map<ShardStatus, Long> countByStatus(Long datasetId) {
         List<DataShardPO> all;
         if (datasetId != null) {
             LambdaQueryWrapper<DataShardPO> wrapper = new LambdaQueryWrapper<>();
@@ -156,12 +157,12 @@ public class DataShardRepositoryImpl implements DataShardRepository {
         } else {
             all = shardMapper.selectList(null);
         }
-        Map<DataShard.ShardStatus, Long> result = new HashMap<>();
-        for (DataShard.ShardStatus status : DataShard.ShardStatus.values()) {
+        Map<ShardStatus, Long> result = new HashMap<>();
+        for (ShardStatus status : ShardStatus.values()) {
             result.put(status, 0L);
         }
         for (DataShardPO po : all) {
-            DataShard.ShardStatus status = DataShard.ShardStatus.fromValue(po.getStatus());
+            ShardStatus status = ShardStatus.fromValue(po.getStatus());
             result.merge(status, 1L, Long::sum);
         }
         return result;

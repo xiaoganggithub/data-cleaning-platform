@@ -1,8 +1,10 @@
 package com.ruoyi.system.domain.repository;
 
 import com.ruoyi.system.domain.entity.DataShard;
+import com.ruoyi.system.domain.entity.ShardStatus;
 import java.util.Optional;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 数据分片领域仓储接口
@@ -36,7 +38,7 @@ public interface DataShardRepository {
      * @param status 状态
      * @return 数据分片列表
      */
-    List<DataShard> findByStatus(DataShard.ShardStatus status);
+    List<DataShard> findByStatus(ShardStatus status);
 
     /**
      * 根据数据集ID和状态查询数据分片
@@ -44,7 +46,7 @@ public interface DataShardRepository {
      * @param status 状态
      * @return 数据分片列表
      */
-    List<DataShard> findByDatasetIdAndStatus(Long datasetId, DataShard.ShardStatus status);
+    List<DataShard> findByDatasetIdAndStatus(Long datasetId, ShardStatus status);
 
     /**
      * 查询所有数据分片
@@ -85,12 +87,6 @@ public interface DataShardRepository {
     Optional<DataShard> findByName(String name);
 
     /**
-     * 查询所有数据分片
-     * @return 数据分片列表
-     */
-    List<DataShard> findAll();
-
-    /**
      * 分页查询数据分片
      * @param page 页码（从0开始）
      * @param size 每页大小
@@ -106,7 +102,7 @@ public interface DataShardRepository {
      * @param size 每页大小
      * @return 数据分片列表
      */
-    List<DataShard> findByFilter(Long datasetId, DataShard.ShardStatus status, int page, int size);
+    List<DataShard> findByFilter(Long datasetId, ShardStatus status, int page, int size);
 
     /**
      * 统计数据分片数量
@@ -126,7 +122,7 @@ public interface DataShardRepository {
      * @param datasetId 数据集ID
      * @return 状态统计
      */
-    java.util.Map<DataShard.ShardStatus, Long> countByStatus(Long datasetId);
+    java.util.Map<ShardStatus, Long> countByStatus(Long datasetId);
 
     /**
      * 删除数据分片

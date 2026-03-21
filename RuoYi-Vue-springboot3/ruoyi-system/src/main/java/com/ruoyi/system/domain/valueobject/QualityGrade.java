@@ -1,75 +1,57 @@
 package com.ruoyi.system.domain.valueobject;
 
-import lombok.Data;
-
 /**
- * 质量等级值对象
- * 用于封装数据集质量评分等级
+ * 质量等级枚举
  */
-@Data
-public class QualityGrade {
-    /**
-     * 质量等级值
-     */
-    private final int value;
+public enum QualityGrade {
+    A(90, 100, "优秀", 1),
+    B(80, 89, "良好", 2),
+    C(70, 79, "一般", 3),
+    D(60, 69, "较差", 4),
+    E(0, 59, "不合格", 5);
 
-    /**
-     * 最小分值
-     */
     private final int min;
-
-    /**
-     * 最大分值
-     */
     private final int max;
-
-    /**
-     * 等级描述
-     */
     private final String description;
+    private final int level;
 
-    private QualityGrade(int value, int min, int max, String description) {
-        this.value = value;
+    QualityGrade(int min, int max, String description, int level) {
         this.min = min;
         this.max = max;
         this.description = description;
+        this.level = level;
     }
 
-    /**
-     * 创建质量等级
-     */
-    public static QualityGrade of(int score) {
-        if (score >= 90) {
-            return new QualityGrade(1, 90, 100, "优秀");
-        } else if (score >= 80) {
-            return new QualityGrade(2, 80, 89, "良好");
-        } else if (score >= 70) {
-            return new QualityGrade(3, 70, 79, "一般");
-        } else if (score >= 60) {
-            return new QualityGrade(4, 60, 69, "较差");
-        } else {
-            return new QualityGrade(5, 0, 59, "不合格");
-        }
-    }
-
-    /**
-     * 获取等级描述
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * 检查分数是否属于此等级
-     */
     public boolean contains(int score) {
         return score >= min && score <= max;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public int getMax() {
+        return max;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
     /**
-     * 获取等级值
+     * 根据等级数字获取质量等级
+     * 1 -> A, 2 -> B, 3 -> C, 4 -> D, 5 -> E
      */
-    public int getValue() {
-        return value;
+    public static QualityGrade of(int level) {
+        for (QualityGrade grade : values()) {
+            if (grade.level == level) {
+                return grade;
+            }
+        }
+        throw new IllegalArgumentException("无效的质量等级: " + level);
     }
 }

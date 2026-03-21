@@ -24,10 +24,11 @@ export function getDatasetByCode(datasetCode) {
   })
 }
 
-export function listDatasets() {
+export function listDatasets(params) {
   return request({
     url: '/system/dataset/list',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -38,11 +39,11 @@ export function listDatasetsByStatus(status) {
   })
 }
 
-export function pageDatasets(page, size) {
+export function pageDatasets(params) {
   return request({
     url: '/system/dataset/page',
     method: 'get',
-    params: { page, size }
+    params
   })
 }
 

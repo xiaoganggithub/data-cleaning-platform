@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.entity;
 
+import com.ruoyi.system.domain.valueobject.TagCode;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,12 +11,12 @@ class TagTest {
 
     @Test
     void testCreateRootTag() {
-        Tag tag = new Tag("模糊", Tag.TagType.BLUR);
+        Tag tag = new Tag("模糊", TagType.BLUR);
 
         assertNotNull(tag);
         assertEquals("模糊", tag.getName());
-        assertEquals(Tag.TagType.BLUR, tag.getType());
-        assertEquals(Tag.TagStatus.NORMAL, tag.getStatus());
+        assertEquals(TagType.BLUR, tag.getType());
+        assertEquals(TagStatus.NORMAL, tag.getStatus());
         assertNull(tag.getParentId());
         assertEquals(0, tag.getUsageCount());
         assertEquals(0, tag.getImageCount());
@@ -23,8 +24,8 @@ class TagTest {
 
     @Test
     void testCreateChildTag() {
-        Tag parentTag = new Tag("质量问题", Tag.TagType.QUALITY);
-        Tag childTag = new Tag(parentTag.getTagId(), "模糊", Tag.TagType.BLUR);
+        Tag parentTag = new Tag("质量问题", TagType.QUALITY);
+        Tag childTag = new Tag(parentTag.getTagId(), "模糊", TagType.BLUR);
 
         assertNotNull(childTag);
         assertEquals(parentTag.getTagId(), childTag.getParentId());
@@ -34,7 +35,7 @@ class TagTest {
     @Test
     void testCreateTagFailsWithEmptyName() {
         assertThrows(DomainException.class, () -> {
-            new Tag("", Tag.TagType.QUALITY);
+            new Tag("", TagType.QUALITY);
         });
     }
 
@@ -47,16 +48,16 @@ class TagTest {
 
     @Test
     void testArchiveTag() {
-        Tag tag = new Tag("测试标签", Tag.TagType.QUALITY);
+        Tag tag = new Tag("测试标签", TagType.QUALITY);
 
         tag.archive();
 
-        assertEquals(Tag.TagStatus.ARCHIVED, tag.getStatus());
+        assertEquals(TagStatus.ARCHIVED, tag.getStatus());
     }
 
     @Test
     void testArchiveAlreadyArchivedFails() {
-        Tag tag = new Tag("测试标签", Tag.TagType.QUALITY);
+        Tag tag = new Tag("测试标签", TagType.QUALITY);
         tag.archive();
 
         assertThrows(DomainException.class, () -> {
@@ -66,7 +67,7 @@ class TagTest {
 
     @Test
     void testIncrementUsageCount() {
-        Tag tag = new Tag("测试标签", Tag.TagType.QUALITY);
+        Tag tag = new Tag("测试标签", TagType.QUALITY);
 
         tag.incrementUsageCount();
 
@@ -75,7 +76,7 @@ class TagTest {
 
     @Test
     void testDecrementUsageCount() {
-        Tag tag = new Tag("测试标签", Tag.TagType.QUALITY);
+        Tag tag = new Tag("测试标签", TagType.QUALITY);
         tag.incrementUsageCount();
         tag.incrementUsageCount();
 
@@ -86,7 +87,7 @@ class TagTest {
 
     @Test
     void testDecrementUsageCountDoesNotGoBelowZero() {
-        Tag tag = new Tag("测试标签", Tag.TagType.QUALITY);
+        Tag tag = new Tag("测试标签", TagType.QUALITY);
 
         tag.decrementUsageCount();
 
@@ -95,7 +96,7 @@ class TagTest {
 
     @Test
     void testUpdateSortOrder() {
-        Tag tag = new Tag("测试标签", Tag.TagType.QUALITY);
+        Tag tag = new Tag("测试标签", TagType.QUALITY);
 
         tag.updateSortOrder(10);
 
@@ -104,7 +105,7 @@ class TagTest {
 
     @Test
     void testUpdatePriority() {
-        Tag tag = new Tag("测试标签", Tag.TagType.QUALITY);
+        Tag tag = new Tag("测试标签", TagType.QUALITY);
 
         tag.updatePriority(5);
 
@@ -113,78 +114,78 @@ class TagTest {
 
     @Test
     void testIsRoot() {
-        Tag rootTag = new Tag("根标签", Tag.TagType.QUALITY);
+        Tag rootTag = new Tag("根标签", TagType.QUALITY);
         assertTrue(rootTag.isRoot());
 
-        Tag childTag = new Tag(rootTag.getTagId(), "子标签", Tag.TagType.BLUR);
+        Tag childTag = new Tag(rootTag.getTagId(), "子标签", TagType.BLUR);
         assertFalse(childTag.isRoot());
     }
 
     @Test
     void testIsActive() {
-        Tag activeTag = new Tag("活跃标签", Tag.TagType.QUALITY);
+        Tag activeTag = new Tag("活跃标签", TagType.QUALITY);
         assertTrue(activeTag.isActive());
 
-        Tag archivedTag = new Tag("已归档标签", Tag.TagType.QUALITY);
+        Tag archivedTag = new Tag("已归档标签", TagType.QUALITY);
         archivedTag.archive();
         assertFalse(archivedTag.isActive());
     }
 
     @Test
     void testTagCodeValidation() {
-        Tag.TagCode validCode = new Tag.TagCode("ABCD1234");
+        TagCode validCode = new TagCode("ABCD1234");
         assertEquals("ABCD1234", validCode.getValue());
 
         assertThrows(DomainException.class, () -> {
-            new Tag.TagCode("AB");
+            new TagCode("AB");
         });
 
         assertThrows(DomainException.class, () -> {
-            new Tag.TagCode("");
+            new TagCode("");
         });
     }
 
     @Test
     void testTagTypeFromValue() {
-        Tag.TagType type = Tag.TagType.fromValue(0);
-        assertEquals(Tag.TagType.QUALITY, type);
+        TagType type = TagType.fromValue(0);
+        assertEquals(TagType.QUALITY, type);
 
-        type = Tag.TagType.fromValue(1);
-        assertEquals(Tag.TagType.CLARITY, type);
+        type = TagType.fromValue(1);
+        assertEquals(TagType.CLARITY, type);
 
-        type = Tag.TagType.fromValue(2);
-        assertEquals(Tag.TagType.BLUR, type);
+        type = TagType.fromValue(2);
+        assertEquals(TagType.BLUR, type);
 
-        type = Tag.TagType.fromValue(3);
-        assertEquals(Tag.TagType.OCCLUSION, type);
+        type = TagType.fromValue(3);
+        assertEquals(TagType.OCCLUSION, type);
 
-        type = Tag.TagType.fromValue(4);
-        assertEquals(Tag.TagType.BACKGROUND, type);
+        type = TagType.fromValue(4);
+        assertEquals(TagType.BACKGROUND, type);
 
-        type = Tag.TagType.fromValue(9);
-        assertEquals(Tag.TagType.OTHER, type);
+        type = TagType.fromValue(9);
+        assertEquals(TagType.OTHER, type);
     }
 
     @Test
     void testInvalidTagTypeValue() {
         assertThrows(DomainException.class, () -> {
-            Tag.TagType.fromValue(99);
+            TagType.fromValue(99);
         });
     }
 
     @Test
     void testTagStatusFromValue() {
-        Tag.TagStatus status = Tag.TagStatus.fromValue(0);
-        assertEquals(Tag.TagStatus.NORMAL, status);
+        TagStatus status = TagStatus.fromValue(0);
+        assertEquals(TagStatus.NORMAL, status);
 
-        status = Tag.TagStatus.fromValue(1);
-        assertEquals(Tag.TagStatus.ARCHIVED, status);
+        status = TagStatus.fromValue(1);
+        assertEquals(TagStatus.ARCHIVED, status);
     }
 
     @Test
     void testInvalidTagStatusValue() {
         assertThrows(DomainException.class, () -> {
-            Tag.TagStatus.fromValue(99);
+            TagStatus.fromValue(99);
         });
     }
 }

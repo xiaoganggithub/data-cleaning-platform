@@ -2,6 +2,7 @@ package com.ruoyi.system.persistence.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.system.domain.entity.ProductCategory;
+import com.ruoyi.system.domain.entity.CategoryStatus;
 import com.ruoyi.system.domain.repository.ProductCategoryRepository;
 import com.ruoyi.system.persistence.mapper.ProductCategoryMapper;
 import com.ruoyi.system.persistence.po.ProductCategoryPO;
@@ -56,7 +57,7 @@ public class ProductCategoryRepositoryImpl implements ProductCategoryRepository 
     }
 
     @Override
-    public List<ProductCategory> findByStatus(ProductCategory.CategoryStatus status) {
+    public List<ProductCategory> findByStatus(CategoryStatus status) {
         LambdaQueryWrapper<ProductCategoryPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductCategoryPO::getStatus, status.getValue());
         return categoryMapper.selectList(wrapper).stream()
@@ -68,7 +69,7 @@ public class ProductCategoryRepositoryImpl implements ProductCategoryRepository 
     public List<ProductCategory> findRootCategories() {
         LambdaQueryWrapper<ProductCategoryPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.isNull(ProductCategoryPO::getParentId);
-        wrapper.eq(ProductCategoryPO::getStatus, ProductCategory.CategoryStatus.NORMAL.getValue());
+        wrapper.eq(ProductCategoryPO::getStatus, CategoryStatus.NORMAL.getValue());
         wrapper.orderByAsc(ProductCategoryPO::getSortOrder);
         return categoryMapper.selectList(wrapper).stream()
                 .map(this::toEntity)
@@ -79,7 +80,7 @@ public class ProductCategoryRepositoryImpl implements ProductCategoryRepository 
     public List<ProductCategory> findLeafCategories() {
         LambdaQueryWrapper<ProductCategoryPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductCategoryPO::getChildCount, 0);
-        wrapper.eq(ProductCategoryPO::getStatus, ProductCategory.CategoryStatus.NORMAL.getValue());
+        wrapper.eq(ProductCategoryPO::getStatus, CategoryStatus.NORMAL.getValue());
         wrapper.orderByAsc(ProductCategoryPO::getSortOrder);
         return categoryMapper.selectList(wrapper).stream()
                 .map(this::toEntity)
@@ -126,14 +127,14 @@ public class ProductCategoryRepositoryImpl implements ProductCategoryRepository 
     }
 
     @Override
-    public Map<ProductCategory.CategoryStatus, Long> countByStatus() {
+    public Map<CategoryStatus, Long> countByStatus() {
         List<ProductCategoryPO> all = categoryMapper.selectList(null);
-        Map<ProductCategory.CategoryStatus, Long> result = new HashMap<>();
-        for (ProductCategory.CategoryStatus status : ProductCategory.CategoryStatus.values()) {
+        Map<CategoryStatus, Long> result = new HashMap<>();
+        for (CategoryStatus status : CategoryStatus.values()) {
             result.put(status, 0L);
         }
         for (ProductCategoryPO po : all) {
-            ProductCategory.CategoryStatus status = ProductCategory.CategoryStatus.fromValue(po.getStatus());
+            CategoryStatus status = CategoryStatus.fromValue(po.getStatus());
             result.merge(status, 1L, Long::sum);
         }
         return result;

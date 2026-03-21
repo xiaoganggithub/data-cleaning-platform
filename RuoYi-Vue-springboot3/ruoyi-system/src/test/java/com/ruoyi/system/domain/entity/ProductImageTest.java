@@ -21,7 +21,7 @@ class ProductImageTest {
         assertEquals("SHOP001", image.getShopcode());
         assertEquals("abcd1234abcd1234abcd1234abcd1234", image.getImageMd5());
         assertEquals("https://example.com/image.jpg", image.getImageUrl());
-        assertEquals(ProductImage.ImageStatus.PENDING_CLEANING, image.getImageStatus());
+        assertEquals(ImageStatus.PENDING_CLEANING, image.getImageStatus());
         assertFalse(image.getLocked());
     }
 
@@ -31,7 +31,7 @@ class ProductImageTest {
 
         image.cleanImage("模糊", "需要重新拍摄");
 
-        assertEquals(ProductImage.ImageStatus.CLEANED, image.getImageStatus());
+        assertEquals(ImageStatus.CLEANED, image.getImageStatus());
         assertEquals("模糊", image.getProblemTypes());
         assertEquals("需要重新拍摄", image.getCleanRemark());
     }
@@ -54,7 +54,7 @@ class ProductImageTest {
 
         image.submitForReview();
 
-        assertEquals(ProductImage.ImageStatus.PENDING_REVIEW, image.getImageStatus());
+        assertEquals(ImageStatus.PENDING_REVIEW, image.getImageStatus());
     }
 
     @Test
@@ -75,7 +75,7 @@ class ProductImageTest {
 
         image.approve();
 
-        assertEquals(ProductImage.ImageStatus.APPROVED, image.getImageStatus());
+        assertEquals(ImageStatus.APPROVED, image.getImageStatus());
     }
 
     @Test
@@ -97,7 +97,7 @@ class ProductImageTest {
 
         image.reject("图片模糊不清");
 
-        assertEquals(ProductImage.ImageStatus.REJECTED, image.getImageStatus());
+        assertEquals(ImageStatus.REJECTED, image.getImageStatus());
     }
 
     @Test
@@ -163,26 +163,26 @@ class ProductImageTest {
 
     @Test
     void testImageStatusFromValue() {
-        ProductImage.ImageStatus status = ProductImage.ImageStatus.fromValue(0);
-        assertEquals(ProductImage.ImageStatus.PENDING_CLEANING, status);
+        ImageStatus status = ImageStatus.fromValue(0);
+        assertEquals(ImageStatus.PENDING_CLEANING, status);
 
-        status = ProductImage.ImageStatus.fromValue(1);
-        assertEquals(ProductImage.ImageStatus.CLEANED, status);
+        status = ImageStatus.fromValue(1);
+        assertEquals(ImageStatus.CLEANED, status);
 
-        status = ProductImage.ImageStatus.fromValue(2);
-        assertEquals(ProductImage.ImageStatus.PENDING_REVIEW, status);
+        status = ImageStatus.fromValue(2);
+        assertEquals(ImageStatus.PENDING_REVIEW, status);
 
-        status = ProductImage.ImageStatus.fromValue(3);
-        assertEquals(ProductImage.ImageStatus.APPROVED, status);
+        status = ImageStatus.fromValue(3);
+        assertEquals(ImageStatus.APPROVED, status);
 
-        status = ProductImage.ImageStatus.fromValue(4);
-        assertEquals(ProductImage.ImageStatus.REJECTED, status);
+        status = ImageStatus.fromValue(4);
+        assertEquals(ImageStatus.REJECTED, status);
     }
 
     @Test
     void testInvalidImageStatusValue() {
         assertThrows(DomainException.class, () -> {
-            ProductImage.ImageStatus.fromValue(99);
+            ImageStatus.fromValue(99);
         });
     }
 

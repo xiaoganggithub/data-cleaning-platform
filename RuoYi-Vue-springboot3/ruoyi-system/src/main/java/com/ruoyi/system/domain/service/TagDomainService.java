@@ -1,7 +1,8 @@
 package com.ruoyi.system.domain.service;
 
 import com.ruoyi.system.domain.entity.Tag;
-import com.ruoyi.system.domain.entity.Tag.TagType;
+import com.ruoyi.system.domain.entity.TagType;
+import com.ruoyi.system.domain.entity.TagStatus;
 
 /**
  * 标签领域服务
@@ -112,7 +113,7 @@ public class TagDomainService {
      */
     public static boolean isValidTagType(int typeValue) {
         try {
-            TagType.valueOf(typeValue);
+            TagType.fromValue(typeValue);
             return true;
         } catch (IllegalArgumentException e) {
             return false;
@@ -142,8 +143,8 @@ public class TagDomainService {
     /**
      * 验证标签是否可以归档
      */
-    public static boolean canArchive(Tag.TagStatus status) {
-        return status == Tag.TagStatus.NORMAL;
+    public static boolean canArchive(TagStatus status) {
+        return status == TagStatus.NORMAL;
     }
 
     /**

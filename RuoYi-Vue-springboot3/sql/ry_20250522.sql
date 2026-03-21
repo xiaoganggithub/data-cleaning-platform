@@ -119,7 +119,7 @@ ALTER SEQUENCE sys_user_user_id RESTART WITH 100;
 -- 初始化-用户信息表数据
 -- ----------------------------
 INSERT INTO sys_user (user_id, dept_id, user_name, nick_name, user_type, email, phonenumber, sex, avatar, password, status, del_flag, login_ip, login_date, pwd_update_date, create_by, create_time, update_by, update_time, remark)
-VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', NOW(), NOW(), 'admin', NOW(), '', NULL, '管理员');
+VALUES (1, 103, 'admin', '瑶池智浣', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', NOW(), NOW(), 'admin', NOW(), '', NULL, '管理员');
 INSERT INTO sys_user (user_id, dept_id, user_name, nick_name, user_type, email, phonenumber, sex, avatar, password, status, del_flag, login_ip, login_date, pwd_update_date, create_by, create_time, update_by, update_time, remark)
 VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', NOW(), NOW(), 'admin', NOW(), '', NULL, '测试员');
 
@@ -364,3 +364,61 @@ INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component,
 VALUES (1018, '部门修改', 103, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'system:dept:edit', '#', 'admin', NOW(), '', NULL, '');
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
 VALUES (1019, '部门删除', 103, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'system:dept:remove', '#', 'admin', NOW(), '', NULL, '');
+
+-- ----------------------------
+-- 数据管理父菜单
+-- ----------------------------
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (4, '数据管理', 0, 4, 'data', NULL, '', '', 1, 0, 'M', '0', '0', '', 'database', 'admin', NOW(), '', NULL, '数据管理目录');
+
+-- 数据管理子菜单
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2001, '数据集管理', 4, 1, 'dataset', 'dataset/index', '', '', 1, 0, 'C', '0', '0', 'data:dataset:list', 'dataset', 'admin', NOW(), '', NULL, '数据集管理菜单');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2002, '分类管理', 4, 2, 'category', 'category/index', '', '', 1, 0, 'C', '0', '0', 'data:category:list', 'category', 'admin', NOW(), '', NULL, '分类管理菜单');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2003, '图片管理', 4, 3, 'image', 'image/index', '', '', 1, 0, 'C', '0', '0', 'data:image:list', 'image', 'admin', NOW(), '', NULL, '图片管理菜单');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2004, '标签管理', 4, 4, 'tag', 'tag/index', '', '', 1, 0, 'C', '0', '0', 'data:tag:list', 'tag', 'admin', NOW(), '', NULL, '标签管理菜单');
+
+-- 数据集管理按钮
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2005, '数据集查询', 2001, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'data:dataset:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2006, '数据集新增', 2001, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'data:dataset:add', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2007, '数据集修改', 2001, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'data:dataset:edit', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2008, '数据集删除', 2001, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'data:dataset:remove', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2009, '数据集导出', 2001, 5, '', '', '', '', 1, 0, 'F', '0', '0', 'data:dataset:export', '#', 'admin', NOW(), '', NULL, '');
+
+-- 分类管理按钮
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2010, '分类查询', 2002, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'data:category:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2011, '分类新增', 2002, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'data:category:add', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2012, '分类修改', 2002, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'data:category:edit', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2013, '分类删除', 2002, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'data:category:remove', '#', 'admin', NOW(), '', NULL, '');
+
+-- 图片管理按钮
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2014, '图片查询', 2003, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'data:image:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2015, '图片新增', 2003, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'data:image:add', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2016, '图片修改', 2003, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'data:image:edit', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2017, '图片删除', 2003, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'data:image:remove', '#', 'admin', NOW(), '', NULL, '');
+
+-- 标签管理按钮
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2018, '标签查询', 2004, 1, '', '', '', '', 1, 0, 'F', '0', '0', 'data:tag:query', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2019, '标签新增', 2004, 2, '', '', '', '', 1, 0, 'F', '0', '0', 'data:tag:add', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2020, '标签修改', 2004, 3, '', '', '', '', 1, 0, 'F', '0', '0', 'data:tag:edit', '#', 'admin', NOW(), '', NULL, '');
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2021, '标签删除', 2004, 4, '', '', '', '', 1, 0, 'F', '0', '0', 'data:tag:remove', '#', 'admin', NOW(), '', NULL, '');

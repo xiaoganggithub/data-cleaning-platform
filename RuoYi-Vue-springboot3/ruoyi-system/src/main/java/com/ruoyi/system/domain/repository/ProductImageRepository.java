@@ -1,6 +1,7 @@
 package com.ruoyi.system.domain.repository;
 
 import com.ruoyi.system.domain.entity.ProductImage;
+import com.ruoyi.system.domain.entity.ImageStatus;
 import java.util.Optional;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public interface ProductImageRepository {
      * @param status 状态
      * @return 商品图片列表
      */
-    List<ProductImage> findByStatus(ProductImage.ImageStatus status);
+    List<ProductImage> findByStatus(ImageStatus status);
 
     /**
      * 根据分类ID查询商品图片
@@ -136,7 +137,7 @@ public interface ProductImageRepository {
      * @param status 状态
      * @return 商品图片列表
      */
-    List<ProductImage> findByDatasetIdAndStatus(Long datasetId, ProductImage.ImageStatus status);
+    List<ProductImage> findByDatasetIdAndStatus(Long datasetId, ImageStatus status);
 
     /**
      * 根据MD5批量查询商品图片
@@ -162,7 +163,7 @@ public interface ProductImageRepository {
      * @param size 每页大小
      * @return 商品图片列表
      */
-    List<ProductImage> findByFilter(Long datasetId, ProductImage.ImageStatus status, Long categoryId, int page, int size);
+    List<ProductImage> findByFilter(Long datasetId, ImageStatus status, Long categoryId, int page, int size);
 
     /**
      * 统计商品图片数量
@@ -183,20 +184,20 @@ public interface ProductImageRepository {
      * @param status 状态
      * @return 商品图片总数
      */
-    long countByDatasetIdAndStatus(Long datasetId, ProductImage.ImageStatus status);
+    long countByDatasetIdAndStatus(Long datasetId, ImageStatus status);
 
     /**
      * 统计各状态商品图片数量
      * @return 状态统计
      */
-    java.util.Map<ProductImage.ImageStatus, Long> countByStatus();
+    java.util.Map<ImageStatus, Long> countByStatus();
 
     /**
      * 统计各状态商品图片数量（按数据集）
      * @param datasetId 数据集ID
      * @return 状态统计
      */
-    java.util.Map<ProductImage.ImageStatus, Long> countByStatus(Long datasetId);
+    java.util.Map<ImageStatus, Long> countByStatus(Long datasetId);
 
     /**
      * 删除商品图片

@@ -9,7 +9,7 @@
             <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <h1 class="hero-title">数据清洗平台</h1>
+        <h1 class="hero-title">瑶池智浣</h1>
         <p class="hero-desc">高效、智能的数据处理与管理系统</p>
       </div>
     </div>
@@ -117,6 +117,8 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
 const stats = ref({
   dataSources: 12,
   tasks: 156,

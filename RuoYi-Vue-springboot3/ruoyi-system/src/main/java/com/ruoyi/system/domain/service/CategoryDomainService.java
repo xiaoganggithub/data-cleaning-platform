@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.service;
 
-import com.ruoyi.system.domain.entity.ProductCategory;
+import com.ruoyi.system.domain.entity.CategoryStatus;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -123,8 +123,8 @@ public class CategoryDomainService {
     /**
      * 验证分类是否可以归档
      */
-    public static boolean canArchive(ProductCategory.CategoryStatus status, int childCount) {
-        return status == ProductCategory.CategoryStatus.NORMAL && childCount == 0;
+    public static boolean canArchive(CategoryStatus status, int childCount) {
+        return status == CategoryStatus.NORMAL && childCount == 0;
     }
 
     /**

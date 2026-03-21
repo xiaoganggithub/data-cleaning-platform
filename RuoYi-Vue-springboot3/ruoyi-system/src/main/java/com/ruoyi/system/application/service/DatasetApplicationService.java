@@ -1,6 +1,7 @@
 package com.ruoyi.system.application.service;
 
 import com.ruoyi.system.domain.entity.Dataset;
+import com.ruoyi.system.domain.entity.DatasetStatus;
 import com.ruoyi.system.domain.repository.DatasetRepository;
 import com.ruoyi.system.domain.service.DatasetDomainService;
 import org.springframework.stereotype.Service;
@@ -33,11 +34,8 @@ public class DatasetApplicationService {
         DatasetDomainService.validateDatasetName(name);
         DatasetDomainService.validateDatasetDescription(description);
 
-        // Generate dataset code
-        String datasetCode = generateDatasetCode();
-
-        // Create domain entity
-        Dataset dataset = new Dataset(datasetCode, name, description);
+        // Create domain entity - Dataset constructor takes name and description
+        Dataset dataset = new Dataset(name, description);
 
         // Save and return
         return datasetRepository.save(dataset);
@@ -73,11 +71,11 @@ public class DatasetApplicationService {
      * 完成清洗
      */
     @Transactional
-    public Dataset completeCleaning(Long datasetId, int cleanedImageCount) {
+    public Dataset completeCleaning(Long datasetId) {
         Dataset dataset = datasetRepository.findById(datasetId)
                 .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
 
-        dataset.completeCleaning(cleanedImageCount);
+        dataset.completeCleaning();
 
         return datasetRepository.save(dataset);
     }
@@ -141,7 +139,9 @@ public class DatasetApplicationService {
         Dataset dataset = datasetRepository.findById(datasetId)
                 .orElseThrow(() -> new IllegalArgumentException("数据集不存在"));
 
-        dataset.updateStatistics(totalImageCount, cleanedImageCount);
+        dataset.setTotalImageCount(new com.ruoyi.system.domain.valueobject.ImageCount(totalImageCount));
+        dataset.setCleanedImageCount(new com.ruoyi.system.domain.valueobject.ImageCount(cleanedImageCount));
+        dataset.updateStatistics();
 
         return datasetRepository.save(dataset);
     }
@@ -170,7 +170,7 @@ public class DatasetApplicationService {
     /**
      * 根据状态查询数据集
      */
-    public List<Dataset> findByStatus(Dataset.DatasetStatus status) {
+    public List<Dataset> findByStatus(DatasetStatus status) {
         return datasetRepository.findByStatus(status);
     }
 
@@ -179,6 +179,20 @@ public class DatasetApplicationService {
      */
     public List<Dataset> findByPage(int page, int size) {
         return datasetRepository.findByPage(page, size);
+    }
+
+    /**
+     * 搜索并分页查询数据集
+     */
+    public List<Dataset> searchByPage(String datasetCode, String name, String beginTime, String endTime, int page, int size) {
+        return datasetRepository.searchByPage(datasetCode, name, beginTime, endTime, page, size);
+    }
+
+    /**
+     * 统计搜索结果数量
+     */
+    public long countSearch(String datasetCode, String name, String beginTime, String endTime) {
+        return datasetRepository.countSearch(datasetCode, name, beginTime, endTime);
     }
 
     /**
@@ -191,7 +205,7 @@ public class DatasetApplicationService {
     /**
      * 各状态统计
      */
-    public Map<Dataset.DatasetStatus, Long> countByStatus() {
+    public Map<DatasetStatus, Long> countByStatus() {
         return datasetRepository.countByStatus();
     }
 

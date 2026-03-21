@@ -1,6 +1,7 @@
 package com.ruoyi.system.domain.service;
 
 import com.ruoyi.system.domain.entity.*;
+import com.ruoyi.system.domain.valueobject.QualityGrade;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;

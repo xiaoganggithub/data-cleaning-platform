@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.system;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.application.service.TagApplicationService;
 import com.ruoyi.system.domain.entity.Tag;
+import com.ruoyi.system.domain.entity.TagType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -100,7 +101,7 @@ public class TagController {
      */
     @GetMapping("/type/{type}")
     public AjaxResult listByType(@PathVariable Integer type) {
-        Tag.TagType tagType = Tag.TagType.fromValue(type);
+        TagType tagType = TagType.fromValue(type);
         List<Tag> tags = tagService.findByType(tagType);
         return AjaxResult.success(tags);
     }
@@ -146,7 +147,7 @@ public class TagController {
      */
     @GetMapping("/statistics/type")
     public AjaxResult statisticsByType() {
-        Map<Tag.TagType, Long> statistics = tagService.countByType();
+        Map<TagType, Long> statistics = tagService.countByType();
         return AjaxResult.success(statistics);
     }
 
@@ -154,13 +155,13 @@ public class TagController {
 
     public static class CreateTagRequest {
         private String name;
-        private Tag.TagType type;
+        private TagType type;
         private String description;
 
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
-        public Tag.TagType getType() { return type; }
-        public void setType(Tag.TagType type) { this.type = type; }
+        public TagType getType() { return type; }
+        public void setType(TagType type) { this.type = type; }
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
     }
@@ -168,15 +169,15 @@ public class TagController {
     public static class CreateChildTagRequest {
         private Long parentId;
         private String name;
-        private Tag.TagType type;
+        private TagType type;
         private String description;
 
         public Long getParentId() { return parentId; }
         public void setParentId(Long parentId) { this.parentId = parentId; }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
-        public Tag.TagType getType() { return type; }
-        public void setType(Tag.TagType type) { this.type = type; }
+        public TagType getType() { return type; }
+        public void setType(TagType type) { this.type = type; }
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
     }

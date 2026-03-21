@@ -7,6 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.ruoyi.system.domain.event.DomainEvent;
+import com.ruoyi.system.domain.event.ShardCompletedEvent;
+import com.ruoyi.system.domain.event.ShardFailedEvent;
+import com.ruoyi.system.domain.event.ShardStartedEvent;
+import com.ruoyi.system.domain.valueobject.ShardCode;
+import com.ruoyi.system.persistence.po.DataShardPO;
+
 /**
  * 数据分片领域实体 (充血模型)
  * 作为聚合根，管理DataShardInfo等实体
@@ -107,6 +114,12 @@ public class DataShard implements Serializable {
     // ========== 构造方法 ==========
 
     /**
+     * 默认构造器（用于反序列化）
+     */
+    public DataShard() {
+    }
+
+    /**
      * 创建数据分片
      */
     public DataShard(Long datasetId, String datasetCode, String name, String description) {
@@ -148,7 +161,7 @@ public class DataShard implements Serializable {
         shard.datasetCode = po.getDatasetCode();
         shard.name = po.getName();
         shard.description = po.getDescription();
-        shard.status = ShardStatus.valueOf(po.getStatus());
+        shard.status = ShardStatus.fromValue(po.getStatus());
         shard.imageCount = po.getImageCount();
         shard.processedCount = po.getProcessedCount();
         shard.errorCount = po.getErrorCount();
@@ -339,194 +352,5 @@ public class DataShard implements Serializable {
         Set<DomainEvent> events = new HashSet<>(this.domainEvents);
         this.domainEvents.clear();
         return events;
-    }
-
-    // ========== 枚举类 ==========
-
-    /**
-     * 分片状态枚举
-     */
-    public enum ShardStatus {
-        PENDING(0, "准备中"),
-        PROCESSING(1, "处理中"),
-        COMPLETED(2, "已完成"),
-        FAILED(3, "失败");
-
-        private final int value;
-        private final String description;
-
-        ShardStatus(int value, String description) {
-            this.value = value;
-            this.description = description;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public static ShardStatus fromValue(int value) {
-            for (ShardStatus status : values()) {
-                if (status.value == value) {
-                    return status;
-                }
-            }
-            throw new DomainException("无效的分片状态值: " + value);
-        }
-    }
-
-    /**
-     * 分片编码值对象
-     */
-    @Data
-    public static class ShardCode {
-        private final String value;
-
-        public ShardCode(String value) {
-            if (value == null || value.isEmpty()) {
-                throw new DomainException("分片编码不能为空");
-            }
-            if (value.length() != 8) {
-                throw new DomainException("分片编码长度必须为8位");
-            }
-            this.value = value.toUpperCase();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ShardCode that = (ShardCode) o;
-            return Objects.equals(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-    }
-}
-
-/**
- * 领域异常
- */
-class DomainException extends RuntimeException {
-    public DomainException(String message) {
-        super(message);
-    }
-}
-
-/**
- * 领域事件接口
- */
-interface DomainEvent extends Serializable {
-    String getEventName();
-    Date getEventTime();
-}
-
-/**
- * 分片开始处理事件
- */
-class ShardStartedEvent implements DomainEvent {
-    private final DataShard.ShardCode shardCode;
-    private final Date eventTime;
-
-    public ShardStartedEvent(DataShard.ShardCode shardCode) {
-        this.shardCode = shardCode;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "ShardStarted";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public DataShard.ShardCode getShardCode() {
-        return shardCode;
-    }
-}
-
-/**
- * 分片处理完成事件
- */
-class ShardCompletedEvent implements DomainEvent {
-    private final DataShard.ShardCode shardCode;
-    private final int processedCount;
-    private final int errorCount;
-    private final Date eventTime;
-
-    public ShardCompletedEvent(DataShard.ShardCode shardCode, int processedCount, int errorCount) {
-        this.shardCode = shardCode;
-        this.processedCount = processedCount;
-        this.errorCount = errorCount;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "ShardCompleted";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public DataShard.ShardCode getShardCode() {
-        return shardCode;
-    }
-
-    public int getProcessedCount() {
-        return processedCount;
-    }
-
-    public int getErrorCount() {
-        return errorCount;
-    }
-}
-
-/**
- * 分片处理失败事件
- */
-class ShardFailedEvent implements DomainEvent {
-    private final DataShard.ShardCode shardCode;
-    private final String errorMessage;
-    private final Date eventTime;
-
-    public ShardFailedEvent(DataShard.ShardCode shardCode, String errorMessage) {
-        this.shardCode = shardCode;
-        this.errorMessage = errorMessage;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "ShardFailed";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public DataShard.ShardCode getShardCode() {
-        return shardCode;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
     }
 }

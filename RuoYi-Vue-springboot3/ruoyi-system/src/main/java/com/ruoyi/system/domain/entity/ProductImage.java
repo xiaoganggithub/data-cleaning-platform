@@ -6,6 +6,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.ruoyi.system.domain.event.DomainEvent;
+import com.ruoyi.system.domain.event.ImageApprovedEvent;
+import com.ruoyi.system.domain.event.ImageCleanedEvent;
+import com.ruoyi.system.domain.event.ImageRejectedEvent;
+import com.ruoyi.system.domain.event.ImageSubmittedForReviewEvent;
+import com.ruoyi.system.persistence.po.ProductImagePO;
+
 /**
  * 商品图片领域实体 (充血模型)
  */
@@ -115,6 +122,12 @@ public class ProductImage implements Serializable {
     // ========== 构造方法 ==========
 
     /**
+     * 默认构造器（用于反序列化）
+     */
+    public ProductImage() {
+    }
+
+    /**
      * 创建商品图片
      */
     public ProductImage(Long datasetId, String datasetCode, String shopcode, String vendorcode, String sn,
@@ -164,7 +177,7 @@ public class ProductImage implements Serializable {
         image.sn = po.getSn();
         image.imageMd5 = po.getImageMd5();
         image.imageUrl = po.getImageUrl();
-        image.imageStatus = ImageStatus.valueOf(po.getImageStatus());
+        image.imageStatus = ImageStatus.fromValue(po.getImageStatus());
         image.locked = po.getLocked();
         image.qualityScore = po.getQualityScore();
         image.cleanRemark = po.getCleanRemark();
@@ -328,174 +341,5 @@ public class ProductImage implements Serializable {
         Set<DomainEvent> events = new HashSet<>(this.domainEvents);
         this.domainEvents.clear();
         return events;
-    }
-
-    // ========== 枚举类 ==========
-
-    /**
-     * 图片状态枚举
-     */
-    public enum ImageStatus {
-        PENDING_CLEANING(0, "待清洗"),
-        CLEANED(1, "已清洗"),
-        PENDING_REVIEW(2, "待审核"),
-        APPROVED(3, "已通过"),
-        REJECTED(4, "已拒绝");
-
-        private final int value;
-        private final String description;
-
-        ImageStatus(int value, String description) {
-            this.value = value;
-            this.description = description;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public static ImageStatus fromValue(int value) {
-            for (ImageStatus status : values()) {
-                if (status.value == value) {
-                    return status;
-                }
-            }
-            throw new DomainException("无效的图片状态值: " + value);
-        }
-    }
-}
-
-/**
- * 领域异常
- */
-class DomainException extends RuntimeException {
-    public DomainException(String message) {
-        super(message);
-    }
-}
-
-/**
- * 领域事件接口
- */
-interface DomainEvent extends Serializable {
-    String getEventName();
-    Date getEventTime();
-}
-
-/**
- * 图片已清洗事件
- */
-class ImageCleanedEvent implements DomainEvent {
-    private final Long imageId;
-    private final Date eventTime;
-
-    public ImageCleanedEvent(Long imageId) {
-        this.imageId = imageId;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "ImageCleaned";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public Long getImageId() {
-        return imageId;
-    }
-}
-
-/**
- * 图片已提交审核事件
- */
-class ImageSubmittedForReviewEvent implements DomainEvent {
-    private final Long imageId;
-    private final Date eventTime;
-
-    public ImageSubmittedForReviewEvent(Long imageId) {
-        this.imageId = imageId;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "ImageSubmittedForReview";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public Long getImageId() {
-        return imageId;
-    }
-}
-
-/**
- * 图片已通过审核事件
- */
-class ImageApprovedEvent implements DomainEvent {
-    private final Long imageId;
-    private final Date eventTime;
-
-    public ImageApprovedEvent(Long imageId) {
-        this.imageId = imageId;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "ImageApproved";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public Long getImageId() {
-        return imageId;
-    }
-}
-
-/**
- * 图片已拒绝事件
- */
-class ImageRejectedEvent implements DomainEvent {
-    private final Long imageId;
-    private final String rejectReason;
-    private final Date eventTime;
-
-    public ImageRejectedEvent(Long imageId, String rejectReason) {
-        this.imageId = imageId;
-        this.rejectReason = rejectReason;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "ImageRejected";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public Long getImageId() {
-        return imageId;
-    }
-
-    public String getRejectReason() {
-        return rejectReason;
     }
 }

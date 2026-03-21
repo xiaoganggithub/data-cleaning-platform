@@ -1,6 +1,7 @@
 package com.ruoyi.system.application.service;
 
 import com.ruoyi.system.domain.entity.ProductCategory;
+import com.ruoyi.system.domain.entity.CategoryStatus;
 import com.ruoyi.system.domain.repository.ProductCategoryRepository;
 import com.ruoyi.system.domain.service.CategoryDomainService;
 import org.springframework.stereotype.Service;
@@ -144,7 +145,7 @@ public class CategoryApplicationService {
     /**
      * 根据状态查询
      */
-    public List<ProductCategory> findByStatus(ProductCategory.CategoryStatus status) {
+    public List<ProductCategory> findByStatus(CategoryStatus status) {
         return categoryRepository.findByStatus(status);
     }
 

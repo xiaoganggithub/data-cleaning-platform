@@ -1,6 +1,7 @@
 package com.ruoyi.system.application.service;
 
 import com.ruoyi.system.domain.entity.ProductImage;
+import com.ruoyi.system.domain.entity.ImageStatus;
 import com.ruoyi.system.domain.repository.ProductImageRepository;
 import com.ruoyi.system.domain.service.ImageDomainService;
 import org.springframework.stereotype.Service;
@@ -192,7 +193,7 @@ public class ImageApplicationService {
     /**
      * 带过滤条件的分页查询
      */
-    public List<ProductImage> findByFilter(Long datasetId, ProductImage.ImageStatus status,
+    public List<ProductImage> findByFilter(Long datasetId, ImageStatus status,
                                           Long categoryId, int page, int size) {
         return imageRepository.findByFilter(datasetId, status, categoryId, page, size);
     }
@@ -214,7 +215,7 @@ public class ImageApplicationService {
     /**
      * 按状态统计
      */
-    public Map<ProductImage.ImageStatus, Long> countByStatus() {
+    public Map<ImageStatus, Long> countByStatus() {
         return imageRepository.countByStatus();
     }
 

@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.system;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.application.service.ImageApplicationService;
 import com.ruoyi.system.domain.entity.ProductImage;
+import com.ruoyi.system.domain.entity.ImageStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -175,7 +176,7 @@ public class ImageController {
                                   @RequestParam(required = false) Long categoryId,
                                   @RequestParam(defaultValue = "0") int page,
                                   @RequestParam(defaultValue = "10") int size) {
-        ProductImage.ImageStatus imageStatus = status != null ? ProductImage.ImageStatus.fromValue(status) : null;
+        ImageStatus imageStatus = status != null ? ImageStatus.fromValue(status) : null;
         List<ProductImage> images = imageService.findByFilter(datasetId, imageStatus, categoryId, page, size);
         return AjaxResult.success(images);
     }

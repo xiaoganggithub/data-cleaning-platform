@@ -2,6 +2,8 @@ package com.ruoyi.system.persistence.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.system.domain.entity.Tag;
+import com.ruoyi.system.domain.entity.TagType;
+import com.ruoyi.system.domain.entity.TagStatus;
 import com.ruoyi.system.domain.repository.TagRepository;
 import com.ruoyi.system.persistence.mapper.TagMapper;
 import com.ruoyi.system.persistence.po.TagPO;
@@ -57,7 +59,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findByStatus(Tag.TagStatus status) {
+    public List<Tag> findByStatus(TagStatus status) {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TagPO::getStatus, status.getValue());
         return tagMapper.selectList(wrapper).stream()
@@ -66,7 +68,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findByType(Tag.TagType type) {
+    public List<Tag> findByType(TagType type) {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TagPO::getType, type.getValue());
         wrapper.orderByAsc(TagPO::getSortOrder);
@@ -76,7 +78,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findByParentIdAndType(Long parentId, Tag.TagType type) {
+    public List<Tag> findByParentIdAndType(Long parentId, TagType type) {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         if (parentId == null) {
             wrapper.isNull(TagPO::getParentId);
@@ -94,7 +96,7 @@ public class TagRepositoryImpl implements TagRepository {
     public List<Tag> findRootTags() {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.isNull(TagPO::getParentId);
-        wrapper.eq(TagPO::getStatus, Tag.TagStatus.NORMAL.getValue());
+        wrapper.eq(TagPO::getStatus, TagStatus.NORMAL.getValue());
         wrapper.orderByAsc(TagPO::getSortOrder);
         return tagMapper.selectList(wrapper).stream()
                 .map(this::toEntity)
@@ -105,7 +107,7 @@ public class TagRepositoryImpl implements TagRepository {
     public List<Tag> findLeafTags() {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TagPO::getImageCount, 0);
-        wrapper.eq(TagPO::getStatus, Tag.TagStatus.NORMAL.getValue());
+        wrapper.eq(TagPO::getStatus, TagStatus.NORMAL.getValue());
         wrapper.orderByAsc(TagPO::getSortOrder);
         return tagMapper.selectList(wrapper).stream()
                 .map(this::toEntity)
@@ -113,11 +115,11 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findRootTagsByType(Tag.TagType type) {
+    public List<Tag> findRootTagsByType(TagType type) {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.isNull(TagPO::getParentId);
         wrapper.eq(TagPO::getType, type.getValue());
-        wrapper.eq(TagPO::getStatus, Tag.TagStatus.NORMAL.getValue());
+        wrapper.eq(TagPO::getStatus, TagStatus.NORMAL.getValue());
         wrapper.orderByAsc(TagPO::getSortOrder);
         return tagMapper.selectList(wrapper).stream()
                 .map(this::toEntity)
@@ -125,11 +127,11 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findLeafTagsByType(Tag.TagType type) {
+    public List<Tag> findLeafTagsByType(TagType type) {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TagPO::getImageCount, 0);
         wrapper.eq(TagPO::getType, type.getValue());
-        wrapper.eq(TagPO::getStatus, Tag.TagStatus.NORMAL.getValue());
+        wrapper.eq(TagPO::getStatus, TagStatus.NORMAL.getValue());
         wrapper.orderByAsc(TagPO::getSortOrder);
         return tagMapper.selectList(wrapper).stream()
                 .map(this::toEntity)
@@ -145,7 +147,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Optional<Tag> findByTypeAndName(Tag.TagType type, String name) {
+    public Optional<Tag> findByTypeAndName(TagType type, String name) {
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TagPO::getType, type.getValue());
         wrapper.eq(TagPO::getName, name);
@@ -171,7 +173,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> findByTypePaginated(Tag.TagType type, int page, int size) {
+    public List<Tag> findByTypePaginated(TagType type, int page, int size) {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<TagPO> pageObj =
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page + 1, size);
         LambdaQueryWrapper<TagPO> wrapper = new LambdaQueryWrapper<>();
@@ -189,28 +191,28 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Map<Tag.TagType, Long> countByType() {
+    public Map<TagType, Long> countByType() {
         List<TagPO> all = tagMapper.selectList(null);
-        Map<Tag.TagType, Long> result = new HashMap<>();
-        for (Tag.TagType type : Tag.TagType.values()) {
+        Map<TagType, Long> result = new HashMap<>();
+        for (TagType type : TagType.values()) {
             result.put(type, 0L);
         }
         for (TagPO po : all) {
-            Tag.TagType type = Tag.TagType.fromValue(po.getType());
+            TagType type = TagType.fromValue(po.getType());
             result.merge(type, 1L, Long::sum);
         }
         return result;
     }
 
     @Override
-    public Map<Tag.TagStatus, Long> countByStatus() {
+    public Map<TagStatus, Long> countByStatus() {
         List<TagPO> all = tagMapper.selectList(null);
-        Map<Tag.TagStatus, Long> result = new HashMap<>();
-        for (Tag.TagStatus status : Tag.TagStatus.values()) {
+        Map<TagStatus, Long> result = new HashMap<>();
+        for (TagStatus status : TagStatus.values()) {
             result.put(status, 0L);
         }
         for (TagPO po : all) {
-            Tag.TagStatus status = Tag.TagStatus.fromValue(po.getStatus());
+            TagStatus status = TagStatus.fromValue(po.getStatus());
             result.merge(status, 1L, Long::sum);
         }
         return result;

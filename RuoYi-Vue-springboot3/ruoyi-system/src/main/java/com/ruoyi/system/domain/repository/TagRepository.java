@@ -1,8 +1,11 @@
 package com.ruoyi.system.domain.repository;
 
 import com.ruoyi.system.domain.entity.Tag;
+import com.ruoyi.system.domain.entity.TagType;
+import com.ruoyi.system.domain.entity.TagStatus;
 import java.util.Optional;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 标签领域仓储接口
@@ -36,14 +39,14 @@ public interface TagRepository {
      * @param status 状态
      * @return 标签列表
      */
-    List<Tag> findByStatus(Tag.TagStatus status);
+    List<Tag> findByStatus(TagStatus status);
 
     /**
      * 根据类型查询标签
      * @param type 类型
      * @return 标签列表
      */
-    List<Tag> findByType(Tag.TagType type);
+    List<Tag> findByType(TagType type);
 
     /**
      * 根据父标签ID和类型查询标签
@@ -51,7 +54,7 @@ public interface TagRepository {
      * @param type 类型
      * @return 标签列表
      */
-    List<Tag> findByParentIdAndType(Long parentId, Tag.TagType type);
+    List<Tag> findByParentIdAndType(Long parentId, TagType type);
 
     /**
      * 查询所有根标签
@@ -70,14 +73,14 @@ public interface TagRepository {
      * @param type 类型
      * @return 标签列表
      */
-    List<Tag> findRootTagsByType(Tag.TagType type);
+    List<Tag> findRootTagsByType(TagType type);
 
     /**
      * 根据类型查询叶子标签
      * @param type 类型
      * @return 标签列表
      */
-    List<Tag> findLeafTagsByType(Tag.TagType type);
+    List<Tag> findLeafTagsByType(TagType type);
 
     /**
      * 根据名称查询标签
@@ -92,7 +95,7 @@ public interface TagRepository {
      * @param name 标签名称
      * @return 标签实体
      */
-    Optional<Tag> findByTypeAndName(Tag.TagType type, String name);
+    Optional<Tag> findByTypeAndName(TagType type, String name);
 
     /**
      * 查询所有标签
@@ -115,7 +118,7 @@ public interface TagRepository {
      * @param size 每页大小
      * @return 标签列表
      */
-    List<Tag> findByTypePaginated(Tag.TagType type, int page, int size);
+    List<Tag> findByTypePaginated(TagType type, int page, int size);
 
     /**
      * 统计标签数量
@@ -127,13 +130,13 @@ public interface TagRepository {
      * 统计各类型标签数量
      * @return 类型统计
      */
-    java.util.Map<Tag.TagType, Long> countByType();
+    java.util.Map<TagType, Long> countByType();
 
     /**
      * 统计各状态标签数量
      * @return 状态统计
      */
-    java.util.Map<Tag.TagStatus, Long> countByStatus();
+    java.util.Map<TagStatus, Long> countByStatus();
 
     /**
      * 删除标签

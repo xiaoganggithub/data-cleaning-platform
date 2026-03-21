@@ -50,12 +50,26 @@ export const useDatasetStore = defineStore('dataset', {
       }
     },
 
-    // 获取数据集列表
-    async fetchDatasets() {
+    // 获取数据集列表（支持分页和搜索）
+    async fetchDatasets(params = {}) {
       this.loading = true
       try {
-        const result = await listDatasets()
-        this.datasets = result.data || []
+        // 使用分页接口，支持搜索参数
+        const result = await pageDatasets(params)
+        // 支持两种返回格式：直接数组或包含data/total的对象
+        if (Array.isArray(result.data)) {
+          this.datasets = result.data
+          this.totalCount = result.total || result.data.length
+        } else if (result.rows && Array.isArray(result.rows)) {
+          this.datasets = result.rows
+          this.totalCount = result.total || result.rows.length
+        } else if (Array.isArray(result)) {
+          this.datasets = result
+          this.totalCount = result.length
+        } else {
+          this.datasets = []
+          this.totalCount = 0
+        }
         return this.datasets
       } finally {
         this.loading = false

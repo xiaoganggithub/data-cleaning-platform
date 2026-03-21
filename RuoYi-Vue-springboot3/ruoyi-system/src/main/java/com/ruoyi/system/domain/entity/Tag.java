@@ -7,6 +7,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import com.ruoyi.system.domain.event.DomainEvent;
+import com.ruoyi.system.domain.event.TagArchivedEvent;
+import com.ruoyi.system.domain.valueobject.TagCode;
+import com.ruoyi.system.persistence.po.TagPO;
+
 /**
  * 标签领域实体 (充血模型)
  * 支持多级标签层级结构
@@ -92,6 +97,12 @@ public class Tag implements Serializable {
     // ========== 构造方法 ==========
 
     /**
+     * 默认构造器（用于反序列化）
+     */
+    public Tag() {
+    }
+
+    /**
      * 创建根标签
      */
     public Tag(String name, TagType type) {
@@ -156,10 +167,10 @@ public class Tag implements Serializable {
         tag.tagId = po.getTagId();
         tag.tagCode = new TagCode(po.getTagCode());
         tag.name = po.getName();
-        tag.type = TagType.valueOf(po.getType());
+        tag.type = TagType.fromValue(po.getType());
         tag.parentId = po.getParentId();
         tag.description = po.getDescription();
-        tag.status = TagStatus.valueOf(po.getStatus());
+        tag.status = TagStatus.fromValue(po.getStatus());
         tag.usageCount = po.getUsageCount();
         tag.imageCount = po.getImageCount();
         tag.sortOrder = po.getSortOrder();
@@ -310,157 +321,5 @@ public class Tag implements Serializable {
         Set<DomainEvent> events = new HashSet<>(this.domainEvents);
         this.domainEvents.clear();
         return events;
-    }
-
-    // ========== 枚举类 ==========
-
-    /**
-     * 标签类型枚举
-     */
-    public enum TagType {
-        QUALITY(0, "质量类"),
-        CLARITY(1, "清晰度类"),
-        BLUR(2, "模糊类"),
-        OCCLUSION(3, "遮挡类"),
-        BACKGROUND(4, "背景类"),
-        OTHER(9, "其他");
-
-        private final int value;
-        private final String description;
-
-        TagType(int value, String description) {
-            this.value = value;
-            this.description = description;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public static TagType fromValue(int value) {
-            for (TagType type : values()) {
-                if (type.value == value) {
-                    return type;
-                }
-            }
-            throw new DomainException("无效的标签类型值: " + value);
-        }
-    }
-
-    /**
-     * 标签状态枚举
-     */
-    public enum TagStatus {
-        NORMAL(0, "正常"),
-        ARCHIVED(1, "已归档");
-
-        private final int value;
-        private final String description;
-
-        TagStatus(int value, String description) {
-            this.value = value;
-            this.description = description;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public static TagStatus fromValue(int value) {
-            for (TagStatus status : values()) {
-                if (status.value == value) {
-                    return status;
-                }
-            }
-            throw new DomainException("无效的标签状态值: " + value);
-        }
-    }
-
-    /**
-     * 标签编码值对象
-     */
-    @Data
-    public static class TagCode {
-        private final String value;
-
-        public TagCode(String value) {
-            if (value == null || value.isEmpty()) {
-                throw new DomainException("标签编码不能为空");
-            }
-            if (value.length() != 8) {
-                throw new DomainException("标签编码长度必须为8位");
-            }
-            this.value = value.toUpperCase();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            TagCode that = (TagCode) o;
-            return Objects.equals(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-    }
-}
-
-/**
- * 领域异常
- */
-class DomainException extends RuntimeException {
-    public DomainException(String message) {
-        super(message);
-    }
-}
-
-/**
- * 领域事件接口
- */
-interface DomainEvent extends Serializable {
-    String getEventName();
-    Date getEventTime();
-}
-
-/**
- * 标签已归档事件
- */
-class TagArchivedEvent implements DomainEvent {
-    private final Tag.TagCode tagCode;
-    private final Date eventTime;
-
-    public TagArchivedEvent(Tag.TagCode tagCode) {
-        this.tagCode = tagCode;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "TagArchived";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public Tag.TagCode getTagCode() {
-        return tagCode;
     }
 }

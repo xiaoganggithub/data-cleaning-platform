@@ -12,7 +12,7 @@
 		<result property="orderNum"       column="order_num"      />
 		<result property="path"           column="path"           />
 		<result property="component"      column="component"      />
-		<result property=query          column=query          />
+		<result property="query"          column="query"          />
 		<result property="routeName"      column="route_name"     />
 		<result property="isFrame"        column="is_frame"       />
 		<result property="isCache"        column="is_cache"       />

@@ -1,6 +1,7 @@
 package com.ruoyi.system.domain.repository;
 
 import com.ruoyi.system.domain.entity.ProductCategory;
+import com.ruoyi.system.domain.entity.CategoryStatus;
 import java.util.Optional;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface ProductCategoryRepository {
      * @param status 状态
      * @return 商品分类列表
      */
-    List<ProductCategory> findByStatus(ProductCategory.CategoryStatus status);
+    List<ProductCategory> findByStatus(CategoryStatus status);
 
     /**
      * 查询所有根分类
@@ -87,7 +88,7 @@ public interface ProductCategoryRepository {
      * 统计各状态商品分类数量
      * @return 状态统计
      */
-    java.util.Map<ProductCategory.CategoryStatus, Long> countByStatus();
+    java.util.Map<CategoryStatus, Long> countByStatus();
 
     /**
      * 删除商品分类

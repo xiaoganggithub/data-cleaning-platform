@@ -1,6 +1,5 @@
 package com.ruoyi.common.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
  * 基于Snowflake算法实现
  */
 @Service
-@RequiredArgsConstructor
 public class IdGeneratorService {
 
     // 时间戳起点 (2020-01-01)
@@ -41,10 +39,13 @@ public class IdGeneratorService {
     // 序列号掩码 (4095)
     private static final long SEQUENCE_MASK = ~(-1L << SEQUENCE_BITS);
 
-    private final long workerId;
-    private final long datacenterId;
+    private final long workerId = 1L;
+    private final long datacenterId = 1L;
     private long sequence = 0L;
     private long lastTimestamp = -1L;
+
+    public IdGeneratorService() {
+    }
 
     /**
      * 生成下一个ID

@@ -6,8 +6,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.List;
-import java.util.ArrayList;
+
+import com.ruoyi.system.domain.event.CategoryArchivedEvent;
+import com.ruoyi.system.domain.event.DomainEvent;
+import com.ruoyi.system.domain.valueobject.CategoryCode;
+import com.ruoyi.system.domain.valueobject.ImageCount;
+import com.ruoyi.system.persistence.po.ProductCategoryPO;
 
 /**
  * 商品图片分类领域实体 (充血模型)
@@ -84,6 +88,12 @@ public class ProductCategory implements Serializable {
     // ========== 构造方法 ==========
 
     /**
+     * 默认构造器（用于反序列化）
+     */
+    public ProductCategory() {
+    }
+
+    /**
      * 创建顶级分类
      */
     public ProductCategory(String name, String description) {
@@ -142,7 +152,7 @@ public class ProductCategory implements Serializable {
         category.parentId = po.getParentId();
         category.name = po.getName();
         category.description = po.getDescription();
-        category.status = CategoryStatus.valueOf(po.getStatus());
+        category.status = CategoryStatus.fromValue(po.getStatus());
         category.imageCount = new ImageCount(po.getImageCount());
         category.childCount = po.getChildCount();
         category.sortOrder = po.getSortOrder();
@@ -300,120 +310,5 @@ public class ProductCategory implements Serializable {
         Set<DomainEvent> events = new HashSet<>(this.domainEvents);
         this.domainEvents.clear();
         return events;
-    }
-
-    // ========== 枚举类 ==========
-
-    /**
-     * 分类状态枚举
-     */
-    public enum CategoryStatus {
-        NORMAL(0, "正常"),
-        ARCHIVED(1, "已归档");
-
-        private final int value;
-        private final String description;
-
-        CategoryStatus(int value, String description) {
-            this.value = value;
-            this.description = description;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public static CategoryStatus fromValue(int value) {
-            for (CategoryStatus status : values()) {
-                if (status.value == value) {
-                    return status;
-                }
-            }
-            throw new DomainException("无效的分类状态值: " + value);
-        }
-    }
-
-    /**
-     * 分类编码值对象
-     */
-    @Data
-    public static class CategoryCode {
-        private final String value;
-
-        public CategoryCode(String value) {
-            if (value == null || value.isEmpty()) {
-                throw new DomainException("分类编码不能为空");
-            }
-            if (value.length() != 8) {
-                throw new DomainException("分类编码长度必须为8位");
-            }
-            this.value = value.toUpperCase();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            CategoryCode that = (CategoryCode) o;
-            return Objects.equals(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(value);
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
-    }
-}
-
-/**
- * 领域异常
- */
-class DomainException extends RuntimeException {
-    public DomainException(String message) {
-        super(message);
-    }
-}
-
-/**
- * 领域事件接口
- */
-interface DomainEvent extends Serializable {
-    String getEventName();
-    Date getEventTime();
-}
-
-/**
- * 分类已归档事件
- */
-class CategoryArchivedEvent implements DomainEvent {
-    private final ProductCategory.CategoryCode categoryCode;
-    private final Date eventTime;
-
-    public CategoryArchivedEvent(ProductCategory.CategoryCode categoryCode) {
-        this.categoryCode = categoryCode;
-        this.eventTime = new Date();
-    }
-
-    @Override
-    public String getEventName() {
-        return "CategoryArchived";
-    }
-
-    @Override
-    public Date getEventTime() {
-        return eventTime;
-    }
-
-    public ProductCategory.CategoryCode getCategoryCode() {
-        return categoryCode;
     }
 }

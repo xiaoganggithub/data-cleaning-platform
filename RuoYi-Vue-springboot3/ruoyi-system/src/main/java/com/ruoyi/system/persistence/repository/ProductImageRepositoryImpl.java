@@ -2,6 +2,7 @@ package com.ruoyi.system.persistence.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.system.domain.entity.ProductImage;
+import com.ruoyi.system.domain.entity.ImageStatus;
 import com.ruoyi.system.domain.repository.ProductImageRepository;
 import com.ruoyi.system.persistence.mapper.ProductImageMapper;
 import com.ruoyi.system.persistence.po.ProductImagePO;
@@ -75,7 +76,7 @@ public class ProductImageRepositoryImpl implements ProductImageRepository {
     }
 
     @Override
-    public List<ProductImage> findByStatus(ProductImage.ImageStatus status) {
+    public List<ProductImage> findByStatus(ImageStatus status) {
         LambdaQueryWrapper<ProductImagePO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductImagePO::getImageStatus, status.getValue());
         return imageMapper.selectList(wrapper).stream()
@@ -119,27 +120,27 @@ public class ProductImageRepositoryImpl implements ProductImageRepository {
 
     @Override
     public List<ProductImage> findPendingCleaningImages() {
-        return findByStatus(ProductImage.ImageStatus.PENDING_CLEANING);
+        return findByStatus(ImageStatus.PENDING_CLEANING);
     }
 
     @Override
     public List<ProductImage> findCleanedImages() {
-        return findByStatus(ProductImage.ImageStatus.CLEANED);
+        return findByStatus(ImageStatus.CLEANED);
     }
 
     @Override
     public List<ProductImage> findPendingReviewImages() {
-        return findByStatus(ProductImage.ImageStatus.PENDING_REVIEW);
+        return findByStatus(ImageStatus.PENDING_REVIEW);
     }
 
     @Override
     public List<ProductImage> findApprovedImages() {
-        return findByStatus(ProductImage.ImageStatus.APPROVED);
+        return findByStatus(ImageStatus.APPROVED);
     }
 
     @Override
     public List<ProductImage> findRejectedImages() {
-        return findByStatus(ProductImage.ImageStatus.REJECTED);
+        return findByStatus(ImageStatus.REJECTED);
     }
 
     @Override
@@ -164,7 +165,7 @@ public class ProductImageRepositoryImpl implements ProductImageRepository {
     }
 
     @Override
-    public List<ProductImage> findByDatasetIdAndStatus(Long datasetId, ProductImage.ImageStatus status) {
+    public List<ProductImage> findByDatasetIdAndStatus(Long datasetId, ImageStatus status) {
         LambdaQueryWrapper<ProductImagePO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductImagePO::getDatasetId, datasetId);
         wrapper.eq(ProductImagePO::getImageStatus, status.getValue());
@@ -193,7 +194,7 @@ public class ProductImageRepositoryImpl implements ProductImageRepository {
     }
 
     @Override
-    public List<ProductImage> findByFilter(Long datasetId, ProductImage.ImageStatus status, Long categoryId, int page, int size) {
+    public List<ProductImage> findByFilter(Long datasetId, ImageStatus status, Long categoryId, int page, int size) {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<ProductImagePO> pageObj =
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page + 1, size);
         LambdaQueryWrapper<ProductImagePO> wrapper = new LambdaQueryWrapper<>();
@@ -225,7 +226,7 @@ public class ProductImageRepositoryImpl implements ProductImageRepository {
     }
 
     @Override
-    public long countByDatasetIdAndStatus(Long datasetId, ProductImage.ImageStatus status) {
+    public long countByDatasetIdAndStatus(Long datasetId, ImageStatus status) {
         LambdaQueryWrapper<ProductImagePO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductImagePO::getDatasetId, datasetId);
         wrapper.eq(ProductImagePO::getImageStatus, status.getValue());
@@ -233,30 +234,30 @@ public class ProductImageRepositoryImpl implements ProductImageRepository {
     }
 
     @Override
-    public Map<ProductImage.ImageStatus, Long> countByStatus() {
+    public Map<ImageStatus, Long> countByStatus() {
         List<ProductImagePO> all = imageMapper.selectList(null);
-        Map<ProductImage.ImageStatus, Long> result = new HashMap<>();
-        for (ProductImage.ImageStatus status : ProductImage.ImageStatus.values()) {
+        Map<ImageStatus, Long> result = new HashMap<>();
+        for (ImageStatus status : ImageStatus.values()) {
             result.put(status, 0L);
         }
         for (ProductImagePO po : all) {
-            ProductImage.ImageStatus status = ProductImage.ImageStatus.fromValue(po.getImageStatus());
+            ImageStatus status = ImageStatus.fromValue(po.getImageStatus());
             result.merge(status, 1L, Long::sum);
         }
         return result;
     }
 
     @Override
-    public Map<ProductImage.ImageStatus, Long> countByStatus(Long datasetId) {
+    public Map<ImageStatus, Long> countByStatus(Long datasetId) {
         LambdaQueryWrapper<ProductImagePO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductImagePO::getDatasetId, datasetId);
         List<ProductImagePO> all = imageMapper.selectList(wrapper);
-        Map<ProductImage.ImageStatus, Long> result = new HashMap<>();
-        for (ProductImage.ImageStatus status : ProductImage.ImageStatus.values()) {
+        Map<ImageStatus, Long> result = new HashMap<>();
+        for (ImageStatus status : ImageStatus.values()) {
             result.put(status, 0L);
         }
         for (ProductImagePO po : all) {
-            ProductImage.ImageStatus status = ProductImage.ImageStatus.fromValue(po.getImageStatus());
+            ImageStatus status = ImageStatus.fromValue(po.getImageStatus());
             result.merge(status, 1L, Long::sum);
         }
         return result;

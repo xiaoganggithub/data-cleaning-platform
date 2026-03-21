@@ -1,4 +1,4 @@
-# 数据清洗平台
+# 瑶池智浣
 
 基于 RuoYi-Vue3 + SpringBoot3 的数据清洗管理平台
 
@@ -126,7 +126,7 @@ npm install
 
 ```env
 VITE_APP_BASE_API = 'http://localhost:8080'
-VITE_APP_NAME = '数据清洗平台'
+VITE_APP_NAME = '瑶池智浣'
 ```
 
 #### 2.4 启动前端

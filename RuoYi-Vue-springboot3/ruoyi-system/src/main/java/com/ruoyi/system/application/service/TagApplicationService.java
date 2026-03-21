@@ -1,6 +1,8 @@
 package com.ruoyi.system.application.service;
 
 import com.ruoyi.system.domain.entity.Tag;
+import com.ruoyi.system.domain.entity.TagType;
+import com.ruoyi.system.domain.entity.TagStatus;
 import com.ruoyi.system.domain.repository.TagRepository;
 import com.ruoyi.system.domain.service.TagDomainService;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class TagApplicationService {
      * 创建根标签
      */
     @Transactional
-    public Tag createRootTag(String name, Tag.TagType type, String description) {
+    public Tag createRootTag(String name, TagType type, String description) {
         TagDomainService.validateTagName(name);
         TagDomainService.validateTagDescription(description);
         TagDomainService.validateTagType(type);
@@ -41,7 +43,7 @@ public class TagApplicationService {
      * 创建子标签
      */
     @Transactional
-    public Tag createChildTag(Long parentId, String name, Tag.TagType type, String description) {
+    public Tag createChildTag(Long parentId, String name, TagType type, String description) {
         TagDomainService.validateTagName(name);
         TagDomainService.validateTagDescription(description);
         TagDomainService.validateTagType(type);
@@ -155,7 +157,7 @@ public class TagApplicationService {
     /**
      * 根据类型查询标签
      */
-    public List<Tag> findByType(Tag.TagType type) {
+    public List<Tag> findByType(TagType type) {
         return tagRepository.findByType(type);
     }
 
@@ -169,7 +171,7 @@ public class TagApplicationService {
     /**
      * 根据状态查询
      */
-    public List<Tag> findByStatus(Tag.TagStatus status) {
+    public List<Tag> findByStatus(TagStatus status) {
         return tagRepository.findByStatus(status);
     }
 
@@ -191,7 +193,7 @@ public class TagApplicationService {
     /**
      * 按类型统计
      */
-    public Map<Tag.TagType, Long> countByType() {
+    public Map<TagType, Long> countByType() {
         return tagRepository.countByType();
     }
 }
